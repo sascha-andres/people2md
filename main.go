@@ -12,13 +12,15 @@ import (
 var (
 	memberShipsAsTag string
 	pathToContacts   string
-	pathToGroups   string
+	pathToGroups     string
+	pathForFiles     string
 )
 
 func init() {
 	flag.StringVar(&memberShipsAsTag, "tags", "", "list of labels to convert to tags")
 	flag.StringVar(&pathToContacts, "contacts", "contacts.json", "output of goobook dump_contacts")
 	flag.StringVar(&pathToGroups, "groups", "groups.json", "output of goobook dump_groups")
+	flag.StringVar(&pathForFiles, "output", ".", "store output in this directory")
 }
 
 func main() {
@@ -52,6 +54,6 @@ func main() {
 		if 0 == len(c.Names) && 0 == len(c.Organizations) {
 			continue
 		}
-		c.Handle(memberShipsAsTag, personalData, groups, addresses, phoneNumbers, emailAddresses, outer)
+		c.Handle(pathForFiles, memberShipsAsTag, personalData, groups, addresses, phoneNumbers, emailAddresses, outer)
 	}
 }

@@ -3,10 +3,11 @@ package internal
 import (
 	"bytes"
 	"io/ioutil"
+	"path"
 	"text/template"
 )
 
-func (mdData *MarkdownData) WriteMarkdown(outer *template.Template, c *Contact) {
+func (mdData *MarkdownData) WriteMarkdown(pathForFiles string, outer *template.Template, c *Contact) {
 	var buff bytes.Buffer
 	outer.Execute(&buff, mdData)
 	var fileName = ""
@@ -16,6 +17,5 @@ func (mdData *MarkdownData) WriteMarkdown(outer *template.Template, c *Contact) 
 		fileName = toFileName(c.Organizations[0].Name) + ".md"
 	}
 
-	ioutil.WriteFile(fileName, buff.Bytes(), 0600)
+	ioutil.WriteFile(path.Join(pathForFiles, fileName), buff.Bytes(), 0600)
 }
-

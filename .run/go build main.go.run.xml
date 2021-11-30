@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="transform" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="people2md" />
+    <working_directory value="$PROJECT_DIR$" />
+    <go_parameters value="-i" />
+    <parameters value="-tags infront,headhunter,family,syzygy,medical,gofrm,friends -output /mnt/c/Temp/mds" />
+    <kind value="FILE" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

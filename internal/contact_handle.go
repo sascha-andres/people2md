@@ -2,7 +2,7 @@ package internal
 
 import "text/template"
 
-func (c *Contact) Handle(tags string, personalData *template.Template, groups []ContactGroup, addresses *template.Template, phoneNumbers *template.Template, emailAddresses *template.Template, outer *template.Template) {
+func (c *Contact) Handle(pathForFiles, tags string, personalData *template.Template, groups []ContactGroup, addresses *template.Template, phoneNumbers *template.Template, emailAddresses *template.Template, outer *template.Template) {
 	var mdData MarkdownData
 	mdData.ETag = c.Etag
 	mdData.ResourceName = c.ResourceName
@@ -12,5 +12,5 @@ func (c *Contact) Handle(tags string, personalData *template.Template, groups []
 	mdData.BuildAddresses(c, addresses)
 	mdData.BuildPhoneNumbers(c, phoneNumbers)
 	mdData.BuildEmailAddresses(c, emailAddresses)
-	mdData.WriteMarkdown(outer, c)
+	mdData.WriteMarkdown(pathForFiles, outer, c)
 }
