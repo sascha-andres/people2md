@@ -23,6 +23,7 @@ arguments:
 ## Upcoming feature
 
 - [ ] copy file only if changed
+- [ ] allow dumping of properties
 
 ## History
 
