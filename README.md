@@ -19,3 +19,13 @@ arguments:
 * tags - a list of Google labels that will be applied in addition to the contact tag
 * contacts - pass the path to contacts.json, defaulting to just the file name
 * groups - pass the path to groups.json, defaulting to just the file name
+
+## Upcoming feature
+
+- [ ] copy file only if changed
+
+## History
+
+|Version|Description|
+|---|---|
+|0.1.0|initial version|
