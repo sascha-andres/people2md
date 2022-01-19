@@ -2,6 +2,7 @@ package internal
 
 const MarkDownTemplate string = `---
 type: person
+disabled rules: [ all ]
 google:
   resource_name: {{ .ResourceName }}
   etag: {{ .ETag }}
