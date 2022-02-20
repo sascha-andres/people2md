@@ -1,6 +1,16 @@
 package internal
 
+import "text/template"
+
 type (
+	Templates struct {
+		Outer          *template.Template
+		Addresses      *template.Template
+		PersonalData   *template.Template
+		PhoneNumbers   *template.Template
+		EmailAddresses *template.Template
+	}
+
 	MarkdownData struct {
 		ETag         string
 		ResourceName string
@@ -15,9 +25,9 @@ type (
 	ContactGroup struct {
 		Etag          string
 		FormattedName string
-		GroupType string
-		MetaData  ContactGroupMetaData
-		Name      string
+		GroupType     string
+		MetaData      ContactGroupMetaData
+		Name          string
 		ResourceName  string
 	}
 
