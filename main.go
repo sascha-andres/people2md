@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"livingit.de/code/people2md/internal"
 	"log"
-	"text/template"
+	"os"
 )
 
 var (
@@ -26,6 +26,17 @@ func init() {
 func main() {
 	flag.Parse()
 
+	arguments := os.Args
+	if len(arguments) >= 2 {
+		if arguments[1] == "help" {
+			flag.PrintDefaults()
+			return
+		}
+		if arguments[1] == "dump-templates" {
+			return
+		}
+	}
+
 	data, err := ioutil.ReadFile(pathToContacts)
 	if err != nil {
 		log.Fatal(err)
@@ -44,16 +55,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	outer := template.Must(template.New("outer").Parse(internal.MarkDownTemplate))
-	addresses := template.Must(template.New("addresses").Parse(internal.AddressesTemplate))
-	personalData := template.Must(template.New("personalData").Parse(internal.PersonalDataTemplate))
-	phoneNumbers := template.Must(template.New("phoneNumbers").Parse(internal.PhoneNumbersTemplate))
-	emailAddresses := template.Must(template.New("emailAddresses").Parse(internal.EmailsTemplate))
+	templates := internal.NewTemplates("")
 
 	for _, c := range contacts {
 		if 0 == len(c.Names) && 0 == len(c.Organizations) {
 			continue
 		}
-		c.Handle(pathForFiles, memberShipsAsTag, personalData, groups, addresses, phoneNumbers, emailAddresses, outer)
+		c.Handle(pathForFiles, memberShipsAsTag, templates.PersonalData, groups, templates.Addresses, templates.PhoneNumbers, templates.EmailAddresses, templates.Outer)
 	}
 }
