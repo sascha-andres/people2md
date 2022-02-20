@@ -3,7 +3,7 @@
     <module name="people2md" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-i" />
-    <parameters value="-tags infront,headhunter,family,syzygy,medical,gofrm,friends -output /mnt/c/Temp/mds" />
+    <parameters value="-template-directory . -tags infront,headhunter,family,syzygy,medical,gofrm,friends,restaurant,grocery -output /mnt/c/OneDrive/Obsidian/Personal/👦\ Persons/ " />
     <kind value="FILE" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/main.go" />
