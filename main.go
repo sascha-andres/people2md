@@ -33,6 +33,10 @@ func main() {
 			return
 		}
 		if arguments[1] == "dump-templates" {
+			t := internal.NewTemplates("")
+			if err := t.WriteTemplates(); err != nil {
+				log.Fatal(err)
+			}
 			return
 		}
 	}
