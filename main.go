@@ -1,12 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"flag"
-	"io/ioutil"
-	"livingit.de/code/people2md/internal"
 	"log"
 	"os"
+
+	"github.com/sascha-andres/flag"
+	"livingit.de/code/people2md/internal"
 )
 
 var (
@@ -15,14 +14,20 @@ var (
 	pathToGroups      string
 	pathForFiles      string
 	templateDirectory string
+	smsBackupFile     string
 )
 
 func init() {
+	log.SetPrefix("P2MD")
+	log.SetFlags(log.LUTC | log.LstdFlags | log.Lshortfile)
+
+	flag.SetEnvPrefix("P2MD")
 	flag.StringVar(&memberShipsAsTag, "tags", "", "list of labels to convert to tags")
 	flag.StringVar(&pathToContacts, "contacts", "contacts.json", "output of goobook dump_contacts")
 	flag.StringVar(&pathToGroups, "groups", "groups.json", "output of goobook dump_groups")
 	flag.StringVar(&pathForFiles, "output", ".", "store output in this directory")
 	flag.StringVar(&templateDirectory, "template-directory", "", "load templates from directcory")
+	flag.StringVar(&smsBackupFile, "sms", "", "path to sms backup file")
 }
 
 func main() {
@@ -46,41 +51,19 @@ func main() {
 		}
 	}
 
-	data, err := ioutil.ReadFile(pathToContacts)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var contacts []internal.Contact
-	if err := json.Unmarshal(data, &contacts); err != nil {
-		log.Fatal(err)
-	}
-
-	data, err = ioutil.ReadFile(pathToGroups)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var groups []internal.ContactGroup
-	if err := json.Unmarshal(data, &groups); err != nil {
-		log.Fatal(err)
-	}
-
-	templates, err := internal.NewTemplates(templateDirectory)
+	app, err := internal.NewApplication(
+		internal.WithPathForFiles(pathForFiles),
+		internal.WithMembershipsAsTag(memberShipsAsTag),
+		internal.WithPathToContacts(pathToContacts),
+		internal.WithSmsBackupFile(smsBackupFile),
+		internal.WithPathToGroups(pathToGroups),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, c := range contacts {
-		if 0 == len(c.Names) && 0 == len(c.Organizations) {
-			continue
-		}
-		c.Handle(pathForFiles,
-			memberShipsAsTag,
-			templates.PersonalData,
-			groups,
-			templates.Addresses,
-			templates.PhoneNumbers,
-			templates.EmailAddresses,
-			templates.Outer,
-		)
+	err = app.Run()
+	if err != nil {
+		log.Fatal(err)
 	}
 }
