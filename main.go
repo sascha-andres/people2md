@@ -18,7 +18,7 @@ var (
 )
 
 func init() {
-	log.SetPrefix("P2MD")
+	log.SetPrefix("[P2MD] ")
 	log.SetFlags(log.LUTC | log.LstdFlags | log.Lshortfile)
 
 	flag.SetEnvPrefix("P2MD")

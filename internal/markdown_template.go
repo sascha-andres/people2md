@@ -21,4 +21,6 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 {{ .Email }}
 {{ end }}{{ if gt (len .Im) 0 }}## IM
 
-{{ .Im }}{{ end }}`
+{{ .Im }}{{ end }}{{ if gt (len .Sms) 0 }}## SMS
+
+{{ .Sms }}{{ end }}`

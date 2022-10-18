@@ -2,6 +2,8 @@ package internal
 
 import (
 	"encoding/json"
+	"encoding/xml"
+	"github.com/sascha-andres/sbrdata"
 	"os"
 	"text/template"
 )
@@ -24,6 +26,7 @@ type (
 		PhoneNumbers string
 		Email        string
 		Tags         string
+		Sms          string
 	}
 
 	ContactGroup struct {
@@ -181,6 +184,18 @@ func (app *Application) Run() error {
 		return err
 	}
 
+	var sms sbrdata.Smses
+	if app.smsBackupFile != "" {
+		data, err := os.ReadFile(app.smsBackupFile)
+		if err != nil {
+			return err
+		}
+		err = xml.Unmarshal(data, &sms)
+		if err != nil {
+			return err
+		}
+	}
+
 	templates, err := NewTemplates(app.templateDirectory)
 	if err != nil {
 		return err
@@ -198,6 +213,7 @@ func (app *Application) Run() error {
 			templates.PhoneNumbers,
 			templates.EmailAddresses,
 			templates.Outer,
+			sms,
 		)
 	}
 	return nil
