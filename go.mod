@@ -1,4 +1,4 @@
-module livingit.de/code/people2md
+module github.com/sascha-andres/people2md
 
 go 1.19
 
