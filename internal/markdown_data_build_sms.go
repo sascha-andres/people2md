@@ -30,7 +30,11 @@ func (mdData *MarkdownData) BuildSms(sms sbrdata.Smses, c *Contact) {
 				result = `|Date|Direction|Text|
 |---|---|---|`
 			}
-			result = fmt.Sprintf("%s\n|%s|%s|%s|", result, message.ReadableDate, "n/a", sanitizeBody(message.Body))
+			direction := "received"
+			if message.Type == "2" {
+				direction = "sent"
+			}
+			result = fmt.Sprintf("%s\n|%s|%s|%s|", result, message.ReadableDate, direction, sanitizeBody(message.Body))
 		}
 	}
 
