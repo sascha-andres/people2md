@@ -23,4 +23,6 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 
 {{ .Im }}{{ end }}{{ if gt (len .Sms) 0 }}## SMS
 
-{{ .Sms }}{{ end }}`
+{{ .Sms }}{{ end }}{{ if gt (len .Calls) 0}}## Call log
+
+{{ .Calls }}{{ end }}`
