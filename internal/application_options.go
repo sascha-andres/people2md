@@ -5,13 +5,22 @@ import (
 	"os"
 )
 
-/*
-	memberShipsAsTag  string
-	pathToContacts    string
-	pathToGroups      string
-	templateDirectory string
-	pathForFiles      string
-*/
+func WithCallBackupFile(callBackupFile string) ApplicationOption {
+  return func(application *Application) error {
+    if callBackupFile == "" {
+      return os.ErrNotExist
+    }
+    fi, err := os.Stat(callBackupFile)
+    if err != nil {
+      return err
+    }
+    if fi.IsDir() {
+      return errors.New("specified path for call backup is a directory")
+    }
+    application.callBackupFile = callBackupFile
+    return nil
+  }
+}
 
 func WithSmsBackupFile(smsBackupFile string) ApplicationOption {
 	return func(application *Application) error {
