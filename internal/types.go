@@ -3,9 +3,10 @@ package internal
 import (
 	"encoding/json"
 	"encoding/xml"
-	"github.com/sascha-andres/sbrdata"
 	"os"
 	"text/template"
+
+	"github.com/sascha-andres/sbrdata"
 )
 
 type (
@@ -148,6 +149,7 @@ type (
 		templateDirectory string
 		pathForFiles      string
 		smsBackupFile     string
+		callBackupFile    string
 	}
 
 	ApplicationOption func(application *Application) error
@@ -185,13 +187,25 @@ func (app *Application) Run() error {
 		return err
 	}
 
-	var sms sbrdata.Smses
+	var sms sbrdata.Messages
 	if app.smsBackupFile != "" {
 		data, err := os.ReadFile(app.smsBackupFile)
 		if err != nil {
 			return err
 		}
 		err = xml.Unmarshal(data, &sms)
+		if err != nil {
+			return err
+		}
+	}
+
+	var calls sbrdata.Calls
+	if app.smsBackupFile != "" {
+		data, err := os.ReadFile(app.callBackupFile)
+		if err != nil {
+			return err
+		}
+		err = xml.Unmarshal(data, &calls)
 		if err != nil {
 			return err
 		}
@@ -215,6 +229,7 @@ func (app *Application) Run() error {
 			templates.EmailAddresses,
 			templates.Outer,
 			sms,
+			calls,
 		)
 	}
 	return nil
