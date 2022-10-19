@@ -15,6 +15,7 @@ var (
 	pathForFiles      string
 	templateDirectory string
 	smsBackupFile     string
+  callBackupFile    string
 )
 
 func init() {
@@ -28,6 +29,7 @@ func init() {
 	flag.StringVar(&pathForFiles, "output", ".", "store output in this directory")
 	flag.StringVar(&templateDirectory, "template-directory", "", "load templates from directcory")
 	flag.StringVar(&smsBackupFile, "sms", "", "path to sms backup file")
+  flag.StringVar(&callBackupFile, "calls", "", "path to call backup file")
 }
 
 func main() {
@@ -57,6 +59,7 @@ func main() {
 		internal.WithPathToContacts(pathToContacts),
 		internal.WithSmsBackupFile(smsBackupFile),
 		internal.WithPathToGroups(pathToGroups),
+    internal.WithCallBackupFile(callBackupFile),
 	)
 	if err != nil {
 		log.Fatal(err)
