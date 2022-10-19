@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/sascha-andres/sbrdata"
 )
 
@@ -29,9 +30,9 @@ func (mdData *MarkdownData) BuildCalls(calls sbrdata.Calls, c *Contact) {
 				result = `|Date|Direction|Number|Duration (s)|
 |---|---|---|---|`
 			}
-			direction := "received"
+			direction := "incoming"
 			if call.Type == "2" {
-				direction = "sent"
+				direction = "outgoing"
 			}
 			result = fmt.Sprintf("%s\n|%s|%s|%s|%s|", result, call.ReadableDate, direction, call.Number, call.Duration)
 		}
