@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (mdData *MarkdownData) BuildSms(sms sbrdata.Smses, c *Contact) {
+func (mdData *MarkdownData) BuildSms(sms sbrdata.Messages, c *Contact) {
 	result := ""
 
 	for _, message := range sms.Sms {
@@ -27,7 +27,7 @@ func (mdData *MarkdownData) BuildSms(sms sbrdata.Smses, c *Contact) {
 		}
 		if include {
 			if result == "" {
-				result = `|Date|Direction|Text|
+				result = `|Date|Direction|Texta|
 |---|---|---|`
 			}
 			direction := "received"

@@ -27,6 +27,7 @@ type (
 		Email        string
 		Tags         string
 		Sms          string
+		Calls        string
 	}
 
 	ContactGroup struct {

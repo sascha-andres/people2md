@@ -1,6 +1,4 @@
 github.com/sascha-andres/flag v0.2.0 h1:0YiT3hFiWu/G4pV6DoJVUe9blSJtK/a9ospGmUwyY/0=
 github.com/sascha-andres/flag v0.2.0/go.mod h1:nYkP7ddMpw1gdlUygWlyG7isbeNGjkWxfWWYEpcQ0uc=
-github.com/sascha-andres/sbrdata v0.0.0-20221017025859-ef255fca533f h1:veF1eUjaTidUNDNQx+v/pMA7trqsMI7bdLMqMe4mM8U=
-github.com/sascha-andres/sbrdata v0.0.0-20221017025859-ef255fca533f/go.mod h1:+hvhLanlE8ZLIS0lk1etkr0dxnRTpWC7YZpMyKDkm88=
-github.com/sascha-andres/sbrdata v0.0.0-20221019121330-516770d89bfa h1:mY2Py0uOO2rK3zSu3cPG37EoDpv0vrIqcV9Il2olbC0=
-github.com/sascha-andres/sbrdata v0.0.0-20221019121330-516770d89bfa/go.mod h1:+hvhLanlE8ZLIS0lk1etkr0dxnRTpWC7YZpMyKDkm88=
+github.com/sascha-andres/sbrdata v1.0.0 h1:6nZOl8WC3thPAdkKO8EH5O39jjARvTeKPZb5KPZaCIw=
+github.com/sascha-andres/sbrdata v1.0.0/go.mod h1:+hvhLanlE8ZLIS0lk1etkr0dxnRTpWC7YZpMyKDkm88=
