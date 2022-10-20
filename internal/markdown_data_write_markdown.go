@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"text/template"
@@ -48,7 +47,7 @@ func (mdData *MarkdownData) WriteMarkdown(pathForFiles string, outer *template.T
 		return
 	}
 
-	err = ioutil.WriteFile(destinationPath, buff.Bytes(), 0600)
+	err = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "could not write file: %s", err)
 		return
