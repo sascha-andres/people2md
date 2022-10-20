@@ -1,6 +1,13 @@
 package internal
 
-import "text/template"
+import (
+	"encoding/json"
+	"encoding/xml"
+	"os"
+	"text/template"
+
+	"github.com/sascha-andres/sbrdata"
+)
 
 type (
 	Templates struct {
@@ -20,6 +27,8 @@ type (
 		PhoneNumbers string
 		Email        string
 		Tags         string
+		Sms          string
+		Calls        string
 	}
 
 	ContactGroup struct {
@@ -131,4 +140,97 @@ type (
 		Id   string
 		Type string
 	}
+
+	// Application is the root of the functionality except some infrastructure stuff
+	Application struct {
+		memberShipsAsTag  string
+		pathToContacts    string
+		pathToGroups      string
+		templateDirectory string
+		pathForFiles      string
+		smsBackupFile     string
+		callBackupFile    string
+	}
+
+	ApplicationOption func(application *Application) error
 )
+
+// NewApplication returns the app root
+func NewApplication(opts ...ApplicationOption) (*Application, error) {
+	a := &Application{}
+	for i := range opts {
+		err := opts[i](a)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return a, nil
+}
+
+// Run executes the application
+func (app *Application) Run() error {
+	data, err := os.ReadFile(app.pathToContacts)
+	if err != nil {
+		return err
+	}
+	var contacts []Contact
+	if err := json.Unmarshal(data, &contacts); err != nil {
+		return err
+	}
+
+	data, err = os.ReadFile(app.pathToGroups)
+	if err != nil {
+		return err
+	}
+	var groups []ContactGroup
+	if err := json.Unmarshal(data, &groups); err != nil {
+		return err
+	}
+
+	var sms sbrdata.Messages
+	if app.smsBackupFile != "" {
+		data, err := os.ReadFile(app.smsBackupFile)
+		if err != nil {
+			return err
+		}
+		err = xml.Unmarshal(data, &sms)
+		if err != nil {
+			return err
+		}
+	}
+
+	var calls sbrdata.Calls
+	if app.smsBackupFile != "" {
+		data, err := os.ReadFile(app.callBackupFile)
+		if err != nil {
+			return err
+		}
+		err = xml.Unmarshal(data, &calls)
+		if err != nil {
+			return err
+		}
+	}
+
+	templates, err := NewTemplates(app.templateDirectory)
+	if err != nil {
+		return err
+	}
+
+	for _, c := range contacts {
+		if 0 == len(c.Names) && 0 == len(c.Organizations) {
+			continue
+		}
+		c.Handle(app.pathForFiles,
+			app.memberShipsAsTag,
+			templates.PersonalData,
+			groups,
+			templates.Addresses,
+			templates.PhoneNumbers,
+			templates.EmailAddresses,
+			templates.Outer,
+			sms,
+			calls,
+		)
+	}
+	return nil
+}

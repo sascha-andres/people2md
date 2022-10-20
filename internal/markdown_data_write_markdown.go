@@ -24,7 +24,7 @@ func (mdData *MarkdownData) WriteMarkdown(pathForFiles string, outer *template.T
 	destinationPath := path.Join(pathForFiles, fileName)
 
 	if _, err := os.Stat(destinationPath); errors.Is(err, os.ErrNotExist) {
-		ioutil.WriteFile(destinationPath, buff.Bytes(), 0600)
+		os.WriteFile(destinationPath, buff.Bytes(), 0600)
 		return
 	}
 
@@ -32,7 +32,7 @@ func (mdData *MarkdownData) WriteMarkdown(pathForFiles string, outer *template.T
 	hasher.Write(buff.Bytes())
 	hashNew := hasher.Sum(nil)
 
-	fileData, err := ioutil.ReadFile(destinationPath)
+	fileData, err := os.ReadFile(destinationPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "could not read existing file: %s", err)
 		return

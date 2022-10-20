@@ -1,12 +1,18 @@
 package internal
 
-import "text/template"
+import (
+	"text/template"
 
-func (c *Contact) Handle(pathForFiles, tags string, personalData *template.Template, groups []ContactGroup, addresses *template.Template, phoneNumbers *template.Template, emailAddresses *template.Template, outer *template.Template) {
+	"github.com/sascha-andres/sbrdata"
+)
+
+func (c *Contact) Handle(pathForFiles, tags string, personalData *template.Template, groups []ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, calls sbrdata.Calls) {
 	var mdData MarkdownData
 	mdData.ETag = c.Etag
 	mdData.ResourceName = c.ResourceName
 
+	mdData.BuildCalls(calls, c)
+	mdData.BuildSms(sms, c)
 	mdData.BuildPersonalData(personalData, c)
 	mdData.BuildTags(tags, c, groups)
 	mdData.BuildAddresses(c, addresses)
