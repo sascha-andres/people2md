@@ -11,6 +11,16 @@ import (
 )
 
 type (
+	DataBuilder interface {
+		BuildCalls(calls sbrdata.Calls, c *Contact)
+		BuildSms(calls sbrdata.Messages, c *Contact)
+		BuildPersonalData(personalData *template.Template, c *Contact)
+		BuildTags(tags string, c *Contact, groups []ContactGroup)
+		BuildAddresses(c *Contact, addresses *template.Template)
+		BuildPhoneNumbers(c *Contact, phoneNumbers *template.Template)
+		BuildEmailAddresses(c *Contact, emailAddresses *template.Template)
+	}
+	
 	Templates struct {
 		Outer          *template.Template
 		Addresses      *template.Template
