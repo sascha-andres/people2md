@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"os"
+	"strings"
 	"text/template"
 
 	"github.com/sascha-andres/sbrdata"
@@ -219,6 +220,12 @@ func (app *Application) Run() error {
 	for _, c := range contacts {
 		if 0 == len(c.Names) && 0 == len(c.Organizations) {
 			continue
+		}
+		if len(c.Names) > 0 {
+			c.Names[0].DisplayName = strings.TrimSpace(c.Names[0].DisplayName)
+		}
+		if len(c.Organizations) > 0 {
+			c.Organizations[0].Name = strings.TrimSpace(c.Organizations[0].Name)
 		}
 		c.Handle(app.pathForFiles,
 			app.memberShipsAsTag,
