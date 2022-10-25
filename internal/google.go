@@ -5,14 +5,32 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"github.com/sascha-andres/people2md/internal/types"
+	"github.com/sascha-andres/sbrdata"
 	"os"
 	"path"
 	"text/template"
 )
 
-func (mdData *MarkdownData) WriteMarkdown(pathForFiles string, outer *template.Template, c *Contact) {
+func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, calls sbrdata.Calls) {
+	e := &types.Elements{}
+
+	e.ETag = c.Etag
+	e.ResourceName = c.ResourceName
+
+	generator.SetETag(c.Etag)
+	generator.SetResourceName(c.ResourceName)
+
+	e.Calls = generator.BuildCalls(calls, c)
+	e.Sms = generator.BuildSms(sms, c)
+	e.PersonalData = generator.BuildPersonalData(personalData, c)
+	e.Tags = generator.BuildTags(tags, c, groups)
+	e.Addresses = generator.BuildAddresses(c, addresses)
+	e.PhoneNumbers = generator.BuildPhoneNumbers(c, phoneNumbers)
+	e.Email = generator.BuildEmailAddresses(c, emailAddresses)
+
 	var buff bytes.Buffer
-	outer.Execute(&buff, mdData)
+	outer.Execute(&buff, e)
 	var fileName = ""
 	if len(c.Names) > 0 {
 		fileName = toFileName(c.Names[0].DisplayName) + ".md"

@@ -1,12 +1,13 @@
-package internal
+package markdown
 
 import (
 	"fmt"
+	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
 	"strings"
 )
 
-func (mdData *MarkdownData) BuildSms(sms sbrdata.Messages, c *Contact) {
+func (mdData *MarkdownData) BuildSms(sms sbrdata.Messages, c *types.Contact) string {
 	result := ""
 
 	for _, message := range sms.Sms {
@@ -38,7 +39,7 @@ func (mdData *MarkdownData) BuildSms(sms sbrdata.Messages, c *Contact) {
 		}
 	}
 
-	mdData.Sms = result
+	return result
 }
 
 func sanitizeBody(body string) string {

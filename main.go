@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/sascha-andres/people2md/internal/generator"
 	"log"
 	"os"
 
@@ -42,11 +43,11 @@ func main() {
 			return
 		}
 		if arguments[1] == "dump-templates" {
-			t, err := internal.NewTemplates("")
+			g, err := generator.GetGenerator()
 			if err != nil {
 				log.Fatal(err)
 			}
-			if err := t.WriteTemplates(); err != nil {
+			if err := internal.WriteTemplates(g); err != nil {
 				log.Fatal(err)
 			}
 			return
