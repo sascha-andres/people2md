@@ -3,7 +3,7 @@
     <module name="people2md" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-i" />
-    <parameters value="-template-directory . -tags infront,headhunter,family,syzygy,medical,gofrm,friends,restaurant,grocery -output &quot;$USER_HOME$/Documents/Obsidian/personal/00-09 Personal/02 👦 Contacts&quot; -sms $USER_HOME$/Downloads/sms-20221016132201.xml" />
+    <parameters value="-tags infront,headhunter,family,syzygy,medical,gofrm,friends,restaurant,grocery -contacts contacts.json -groups groups.json -output $USER_HOME$/tmp" />
     <kind value="FILE" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/main.go" />
