@@ -66,7 +66,9 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 		return
 	}
 
-	log.Printf("replacing %s", destinationPath)
+	if verbose {
+		log.Printf("replacing %s", destinationPath)
+	}
 	err = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "could not write file: %s", err)
