@@ -1,4 +1,4 @@
-package internal
+package markdown
 
 const MarkDownTemplate string = `---
 type: person

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/sascha-andres/people2md/internal/types"
 	"os"
 	"path"
 	"text/template"
@@ -8,13 +9,13 @@ import (
 
 // NewTemplates returns a new instance of the templates struct containing
 // the templates used to render the contacts
-func NewTemplates(directory string) (*Templates, error) {
-	t := &Templates{
-		Outer:          template.Must(template.New("outer").Parse(MarkDownTemplate)),
-		Addresses:      template.Must(template.New("addresses").Parse(AddressesTemplate)),
-		PersonalData:   template.Must(template.New("personalData").Parse(PersonalDataTemplate)),
-		PhoneNumbers:   template.Must(template.New("phoneNumbers").Parse(PhoneNumbersTemplate)),
-		EmailAddresses: template.Must(template.New("emailAddresses").Parse(EmailsTemplate)),
+func NewTemplates(generator types.DataBuilder, directory string) (*types.Templates, error) {
+	t := &types.Templates{
+		Outer:          generator.GetTemplate(types.OuterTemplate),
+		Addresses:      generator.GetTemplate(types.AddressesTemplate),
+		PersonalData:   generator.GetTemplate(types.PersonalDataTemplate),
+		PhoneNumbers:   generator.GetTemplate(types.PhoneNumbersTemplate),
+		EmailAddresses: generator.GetTemplate(types.EmailAddressesTemplate),
 	}
 	if "" != directory {
 		if fileExists(path.Join(directory, "addresses.tmpl")) {

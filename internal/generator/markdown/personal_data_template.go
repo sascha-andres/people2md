@@ -1,4 +1,4 @@
-package internal
+package markdown
 
 const PersonalDataTemplate string = `{{ if gt (len .Names) 0 }}# {{ (index .Names 0).DisplayName }}
 {{ if gt (len .Organizations) 0 }}

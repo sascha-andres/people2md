@@ -1,20 +1,23 @@
 package internal
 
-import "os"
+import (
+	"github.com/sascha-andres/people2md/internal/types"
+	"os"
+)
 
 // WriteTemplates writes default templates to current directory
-func (t *Templates) WriteTemplates() error {
-	if err := os.WriteFile("addresses.tmpl", []byte(AddressesTemplate), 0600); err != nil {
+func WriteTemplates(db types.DataBuilder) error {
+	if err := os.WriteFile("addresses.tmpl", db.GetTemplateData(types.AddressesTemplate), 0600); err != nil {
 		return err
 	}
-	if err := os.WriteFile("emails.tmpl", []byte(EmailsTemplate), 0600); err != nil {
+	if err := os.WriteFile("emails.tmpl", db.GetTemplateData(types.EmailAddressesTemplate), 0600); err != nil {
 		return err
 	}
-	if err := os.WriteFile("markdown.tmpl", []byte(MarkDownTemplate), 0600); err != nil {
+	if err := os.WriteFile("markdown.tmpl", db.GetTemplateData(types.OuterTemplate), 0600); err != nil {
 		return err
 	}
-	if err := os.WriteFile("personal.tmpl", []byte(PersonalDataTemplate), 0600); err != nil {
+	if err := os.WriteFile("personal.tmpl", db.GetTemplateData(types.PersonalDataTemplate), 0600); err != nil {
 		return err
 	}
-	return os.WriteFile("phone.tmpl", []byte(PhoneNumbersTemplate), 0600)
+	return os.WriteFile("phone.tmpl", db.GetTemplateData(types.PhoneNumbersTemplate), 0600)
 }
