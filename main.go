@@ -17,6 +17,7 @@ var (
 	templateDirectory string
 	smsBackupFile     string
 	callBackupFile    string
+	verbose           bool
 )
 
 func init() {
@@ -31,6 +32,7 @@ func init() {
 	flag.StringVar(&templateDirectory, "template-directory", "", "load templates from directcory")
 	flag.StringVar(&smsBackupFile, "sms", "", "path to sms backup file")
 	flag.StringVar(&callBackupFile, "calls", "", "path to call backup file")
+	flag.BoolVar(&verbose, "verbose", false, "print some output while operating")
 }
 
 func main() {
@@ -61,6 +63,7 @@ func main() {
 		internal.WithSmsBackupFile(smsBackupFile),
 		internal.WithPathToGroups(pathToGroups),
 		internal.WithCallBackupFile(callBackupFile),
+		internal.WithVerbose(verbose),
 	)
 	if err != nil {
 		log.Fatal(err)

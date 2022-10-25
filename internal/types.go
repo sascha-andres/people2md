@@ -6,6 +6,7 @@ import (
 	"github.com/sascha-andres/people2md/internal/generator"
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
+	"log"
 	"os"
 	"strings"
 )
@@ -21,6 +22,7 @@ type (
 		pathForFiles      string
 		smsBackupFile     string
 		callBackupFile    string
+		verbose           bool
 	}
 
 	ApplicationOption func(application *Application) error
@@ -45,10 +47,12 @@ func (app *Application) Run() error {
 		return err
 	}
 	var contacts []types.Contact
+	log.Print("reading contacts")
 	if err := json.Unmarshal(data, &contacts); err != nil {
 		return err
 	}
 
+	log.Print("reading groups")
 	data, err = os.ReadFile(app.pathToGroups)
 	if err != nil {
 		return err
@@ -60,6 +64,7 @@ func (app *Application) Run() error {
 
 	var sms sbrdata.Messages
 	if app.smsBackupFile != "" {
+		log.Print("reading SMS backup file")
 		data, err := os.ReadFile(app.smsBackupFile)
 		if err != nil {
 			return err
@@ -71,7 +76,8 @@ func (app *Application) Run() error {
 	}
 
 	var calls sbrdata.Calls
-	if app.smsBackupFile != "" {
+	if app.callBackupFile != "" {
+		log.Print("reading call backup file")
 		data, err := os.ReadFile(app.callBackupFile)
 		if err != nil {
 			return err
@@ -112,6 +118,7 @@ func (app *Application) Run() error {
 			templates.Outer,
 			sms,
 			calls,
+			app.verbose,
 		)
 	}
 	return nil
