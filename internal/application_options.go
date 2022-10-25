@@ -6,26 +6,26 @@ import (
 )
 
 func WithCallBackupFile(callBackupFile string) ApplicationOption {
-  return func(application *Application) error {
-    if callBackupFile == "" {
-      return os.ErrNotExist
-    }
-    fi, err := os.Stat(callBackupFile)
-    if err != nil {
-      return err
-    }
-    if fi.IsDir() {
-      return errors.New("specified path for call backup is a directory")
-    }
-    application.callBackupFile = callBackupFile
-    return nil
-  }
+	return func(application *Application) error {
+		if callBackupFile == "" {
+			return nil
+		}
+		fi, err := os.Stat(callBackupFile)
+		if err != nil {
+			return err
+		}
+		if fi.IsDir() {
+			return errors.New("specified path for call backup is a directory")
+		}
+		application.callBackupFile = callBackupFile
+		return nil
+	}
 }
 
 func WithSmsBackupFile(smsBackupFile string) ApplicationOption {
 	return func(application *Application) error {
 		if smsBackupFile == "" {
-			return os.ErrNotExist
+			return nil
 		}
 		fi, err := os.Stat(smsBackupFile)
 		if err != nil {
