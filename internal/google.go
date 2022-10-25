@@ -7,12 +7,13 @@ import (
 	"fmt"
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
+	"log"
 	"os"
 	"path"
 	"text/template"
 )
 
-func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, calls sbrdata.Calls) {
+func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, calls sbrdata.Calls, verbose bool) {
 	e := &types.Elements{}
 
 	e.ETag = c.Etag
@@ -65,6 +66,7 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 		return
 	}
 
+	log.Printf("replacing %s", destinationPath)
 	err = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "could not write file: %s", err)

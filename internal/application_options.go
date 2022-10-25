@@ -5,6 +5,13 @@ import (
 	"os"
 )
 
+func WithVerbose(verbose bool) ApplicationOption {
+	return func(application *Application) error {
+		application.verbose = verbose
+		return nil
+	}
+}
+
 func WithCallBackupFile(callBackupFile string) ApplicationOption {
 	return func(application *Application) error {
 		if callBackupFile == "" {
