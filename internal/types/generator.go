@@ -16,9 +16,18 @@ type (
 		EmailAddresses *template.Template
 	}
 
+	Message struct {
+		UnixTimestamp uint64
+		Date          string
+		Direction     string
+		Text          string
+	}
+
+	MessageList []Message
+
 	DataBuilder interface {
 		BuildCalls(calls sbrdata.Calls, c *Contact) string
-		BuildSms(calls sbrdata.Messages, c *Contact) string
+		BuildSms(calls MessageList) string
 		BuildPersonalData(personalData *template.Template, c *Contact) string
 		BuildTags(tags string, c *Contact, groups []ContactGroup) string
 		BuildAddresses(c *Contact, addresses *template.Template) string
@@ -30,3 +39,7 @@ type (
 		GetTemplateData(id TemplateIdentifier) []byte
 	}
 )
+
+func (ml MessageList) Len() int           { return len(ml) }
+func (ml MessageList) Swap(i, j int)      { ml[i], ml[j] = ml[j], ml[i] }
+func (ml MessageList) Less(i, j int) bool { return ml[i].UnixTimestamp < ml[j].UnixTimestamp }

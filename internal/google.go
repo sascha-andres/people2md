@@ -10,6 +10,8 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
+	"strconv"
 	"text/template"
 )
 
@@ -22,8 +24,14 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 	generator.SetETag(c.Etag)
 	generator.SetResourceName(c.ResourceName)
 
+	// build message list
+	var ml types.MessageList
+	ml = addSmsToList(c, sms, ml)
+	ml = addMmsToList(c, sms, ml)
+	sort.Sort(ml)
+
 	e.Calls = generator.BuildCalls(calls, c)
-	e.Sms = generator.BuildSms(sms, c)
+	e.Sms = generator.BuildSms(ml)
 	e.PersonalData = generator.BuildPersonalData(personalData, c)
 	e.Tags = generator.BuildTags(tags, c, groups)
 	e.Addresses = generator.BuildAddresses(c, addresses)
@@ -74,4 +82,91 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 		fmt.Fprintf(os.Stderr, "could not write file: %s", err)
 		return
 	}
+}
+
+func addMmsToList(c *types.Contact, sms sbrdata.Messages, ml types.MessageList) types.MessageList {
+	for _, message := range sms.Mms {
+		include := false
+		for _, name := range c.Names {
+			include = name.DisplayName == message.ContactName
+			if include {
+				break
+			}
+		}
+		if !include {
+			for _, org := range c.Organizations {
+				include = org.Name == message.ContactName
+				if include {
+					break
+				}
+			}
+		}
+		if include {
+			d, err := strconv.ParseUint(message.Date, 10, 64)
+			if err != nil {
+				continue
+			}
+			direction := "received"
+			switch message.MsgBox {
+			case "1":
+				break
+			case "2":
+				direction = "sent"
+				break
+			default:
+				continue
+			}
+			body := "not - found"
+			for _, part := range message.Parts.Part {
+				if part.Ct == "text/plain" || part.Name == "body" {
+					body = part.AttrText
+					break
+				}
+			}
+			ml = append(ml, types.Message{
+				UnixTimestamp: d,
+				Date:          message.ReadableDate,
+				Direction:     direction,
+				Text:          body,
+			})
+		}
+	}
+	return ml
+}
+
+func addSmsToList(c *types.Contact, sms sbrdata.Messages, ml types.MessageList) types.MessageList {
+	for _, message := range sms.Sms {
+		include := false
+		for _, name := range c.Names {
+			include = name.DisplayName == message.ContactName
+			if include {
+				break
+			}
+		}
+		if !include {
+			for _, org := range c.Organizations {
+				include = org.Name == message.ContactName
+				if include {
+					break
+				}
+			}
+		}
+		if include {
+			d, err := strconv.ParseUint(message.Date, 10, 64)
+			if err != nil {
+				continue
+			}
+			direction := "received"
+			if message.Type == "2" {
+				direction = "sent"
+			}
+			ml = append(ml, types.Message{
+				UnixTimestamp: d,
+				Date:          message.ReadableDate,
+				Direction:     direction,
+				Text:          message.Body,
+			})
+		}
+	}
+	return ml
 }
