@@ -54,23 +54,27 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 		return
 	}
 
+	var res int = 1
 	hasher := sha256.New()
 	hasher.Write(buff.Bytes())
 	hashNew := hasher.Sum(nil)
 
 	fileData, err := os.ReadFile(destinationPath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "could not read existing file: %s", err)
-		return
+	if err == nil {
+		hasher.Reset()
+
+		hasher.Write(fileData)
+		hashOld := hasher.Sum(nil)
+
+		res = bytes.Compare(hashOld, hashNew)
+	} else {
+		_, _ = fmt.Fprintf(os.Stderr, "could not read existing file: %s", err)
 	}
 
-	hasher = sha256.New()
-	hasher.Write(fileData)
-	hashOld := hasher.Sum(nil)
-
-	res := bytes.Compare(hashOld, hashNew)
-
 	if res == 0 {
+		if verbose {
+			log.Printf("identical: %s", destinationPath)
+		}
 		return
 	}
 
@@ -79,7 +83,7 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 	}
 	err = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "could not write file: %s", err)
+		_, _ = fmt.Fprintf(os.Stderr, "could not write file: %s", err)
 		return
 	}
 }
