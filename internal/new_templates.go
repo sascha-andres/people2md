@@ -1,10 +1,11 @@
 package internal
 
 import (
-	"github.com/sascha-andres/people2md/internal/types"
 	"os"
 	"path"
 	"text/template"
+
+	"github.com/sascha-andres/people2md/internal/types"
 )
 
 // NewTemplates returns a new instance of the templates struct containing
@@ -16,6 +17,8 @@ func NewTemplates(generator types.DataBuilder, directory string) (*types.Templat
 		PersonalData:   generator.GetTemplate(types.PersonalDataTemplate),
 		PhoneNumbers:   generator.GetTemplate(types.PhoneNumbersTemplate),
 		EmailAddresses: generator.GetTemplate(types.EmailAddressesTemplate),
+		Calls:          generator.GetTemplate(types.CallsTemplate),
+		Messages:       generator.GetTemplate(types.MessagesTemplate),
 	}
 	if "" != directory {
 		if fileExists(path.Join(directory, "addresses.tmpl")) {
@@ -52,6 +55,20 @@ func NewTemplates(generator types.DataBuilder, directory string) (*types.Templat
 				return nil, err
 			}
 			t.PhoneNumbers = template.Must(template.New("phoneNumbers").Parse(string(data)))
+		}
+		if fileExists(path.Join(directory, "calls.tmpl")) {
+			data, err := os.ReadFile(path.Join(directory, "calls.tmpl"))
+			if err != nil {
+				return nil, err
+			}
+			t.Calls = template.Must(template.New("calls").Parse(string(data)))
+		}
+		if fileExists(path.Join(directory, "messages.tmpl")) {
+			data, err := os.ReadFile(path.Join(directory, "messages.tmpl"))
+			if err != nil {
+				return nil, err
+			}
+			t.Messages = template.Must(template.New("messages").Parse(string(data)))
 		}
 	}
 	return t, nil

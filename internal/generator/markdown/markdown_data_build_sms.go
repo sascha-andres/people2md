@@ -2,11 +2,12 @@ package markdown
 
 import (
 	"fmt"
-	"github.com/sascha-andres/people2md/internal/types"
 	"strings"
+
+	"github.com/sascha-andres/people2md/internal/types"
 )
 
-func (mdData *MarkdownData) BuildSms(ml types.MessageList) string {
+func (mdData *MarkdownData) BuildMessages(ml types.MessageList) string {
 	result := ""
 
 	for _, message := range ml {

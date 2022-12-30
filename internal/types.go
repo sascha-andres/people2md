@@ -3,12 +3,13 @@ package internal
 import (
 	"encoding/json"
 	"encoding/xml"
-	"github.com/sascha-andres/people2md/internal/generator"
-	"github.com/sascha-andres/people2md/internal/types"
-	"github.com/sascha-andres/sbrdata"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/sascha-andres/people2md/internal/generator"
+	"github.com/sascha-andres/people2md/internal/types"
+	"github.com/sascha-andres/sbrdata"
 )
 
 type (
@@ -119,6 +120,8 @@ func (app *Application) Run() error {
 			sms,
 			calls,
 			app.verbose,
+			templates.Calls,
+			templates.Messages,
 		)
 	}
 	return nil

@@ -1,8 +1,9 @@
 package types
 
 import (
-	"github.com/sascha-andres/sbrdata"
 	"text/template"
+
+	"github.com/sascha-andres/sbrdata"
 )
 
 type (
@@ -14,6 +15,8 @@ type (
 		PersonalData   *template.Template
 		PhoneNumbers   *template.Template
 		EmailAddresses *template.Template
+		Messages       *template.Template
+		Calls          *template.Template
 	}
 
 	Message struct {
@@ -27,7 +30,7 @@ type (
 
 	DataBuilder interface {
 		BuildCalls(calls sbrdata.Calls, c *Contact) string
-		BuildSms(calls MessageList) string
+		BuildMessages(messages MessageList) string
 		BuildPersonalData(personalData *template.Template, c *Contact) string
 		BuildTags(tags string, c *Contact, groups []ContactGroup) string
 		BuildAddresses(c *Contact, addresses *template.Template) string

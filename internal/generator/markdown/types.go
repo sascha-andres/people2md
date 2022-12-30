@@ -1,8 +1,9 @@
 package markdown
 
 import (
-	"github.com/sascha-andres/people2md/internal/types"
 	"text/template"
+
+	"github.com/sascha-andres/people2md/internal/types"
 )
 
 type (
@@ -32,6 +33,10 @@ func (mdData *MarkdownData) GetTemplate(id types.TemplateIdentifier) *template.T
 		return template.Must(template.New("outer").Parse(PhoneNumbersTemplate))
 	case types.EmailAddressesTemplate:
 		return template.Must(template.New("outer").Parse(EmailsTemplate))
+	case types.CallsTemplate:
+		return template.Must(template.New("outer").Parse(MarkDownTemplateCalls))
+	case types.MessagesTemplate:
+		return template.Must(template.New("outer").Parse(MarkDownTemplateMessages))
 	}
 
 	return nil
@@ -49,6 +54,10 @@ func (mdData *MarkdownData) GetTemplateData(id types.TemplateIdentifier) []byte 
 		return []byte(PhoneNumbersTemplate)
 	case types.EmailAddressesTemplate:
 		return []byte(EmailsTemplate)
+	case types.CallsTemplate:
+		return []byte(MarkDownTemplateCalls)
+	case types.MessagesTemplate:
+		return []byte(MarkDownTemplateMessages)
 	}
 
 	return nil

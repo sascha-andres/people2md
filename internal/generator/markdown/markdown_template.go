@@ -21,10 +21,10 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 {{ .Email }}
 {{ end }}{{ if gt (len .Im) 0 }}## IM
 
-{{ .Im }}{{ end }}{{ if gt (len .Sms) 0 }}## SMS
+{{ .Im }}{{ end }}{{ if gt (len .Messages) 0 }}## SMS
 
-{{ .Sms }}
+[[{{.MainLinkName}} Messages]]
 
 {{ end }}{{ if gt (len .Calls) 0 }}## Call log
 
-{{ .Calls }}{{ end }}`
+[[{{.MainLinkName}} Calls]]{{ end }}`

@@ -5,17 +5,18 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"github.com/sascha-andres/people2md/internal/types"
-	"github.com/sascha-andres/sbrdata"
 	"log"
 	"os"
 	"path"
 	"sort"
 	"strconv"
 	"text/template"
+
+	"github.com/sascha-andres/people2md/internal/types"
+	"github.com/sascha-andres/sbrdata"
 )
 
-func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, calls sbrdata.Calls, verbose bool) {
+func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, callData sbrdata.Calls, verbose bool, calls, messages *template.Template) {
 	e := &types.Elements{}
 
 	e.ETag = c.Etag
@@ -30,27 +31,42 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 	ml = addMmsToList(c, sms, ml)
 	sort.Sort(ml)
 
-	e.Calls = generator.BuildCalls(calls, c)
-	e.Sms = generator.BuildSms(ml)
+	if len(c.Names) > 0 {
+		e.MainLinkName = toFileName(c.Names[0].DisplayName)
+	} else {
+		e.MainLinkName = toFileName(c.Organizations[0].Name)
+	}
+
+	e.Calls = generator.BuildCalls(callData, c)
+	e.Messages = generator.BuildMessages(ml)
 	e.PersonalData = generator.BuildPersonalData(personalData, c)
 	e.Tags = generator.BuildTags(tags, c, groups)
 	e.Addresses = generator.BuildAddresses(c, addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(c, phoneNumbers)
 	e.Email = generator.BuildEmailAddresses(c, emailAddresses)
-
-	var buff bytes.Buffer
-	outer.Execute(&buff, e)
-	var fileName = ""
-	if len(c.Names) > 0 {
-		fileName = toFileName(c.Names[0].DisplayName) + ".md"
-	} else {
-		fileName = toFileName(c.Organizations[0].Name) + ".md"
+	if len(e.Calls) > 0 {
+		var (
+			buff bytes.Buffer
+		)
+		_ = calls.Execute(&buff, e)
+		writeBufferToFile(path.Join(pathForFiles, e.MainLinkName+" Calls.md"), buff, verbose)
+	}
+	if len(e.Messages) > 0 {
+		var (
+			buff bytes.Buffer
+		)
+		_ = messages.Execute(&buff, e)
+		writeBufferToFile(path.Join(pathForFiles, e.MainLinkName+" Messages.md"), buff, verbose)
 	}
 
-	destinationPath := path.Join(pathForFiles, fileName)
+	var buff bytes.Buffer
+	_ = outer.Execute(&buff, e)
+	writeBufferToFile(path.Join(pathForFiles, e.MainLinkName+".md"), buff, verbose)
+}
 
+func writeBufferToFile(destinationPath string, buff bytes.Buffer, verbose bool) {
 	if _, err := os.Stat(destinationPath); errors.Is(err, os.ErrNotExist) {
-		os.WriteFile(destinationPath, buff.Bytes(), 0600)
+		_ = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 		return
 	}
 

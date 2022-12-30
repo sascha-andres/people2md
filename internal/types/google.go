@@ -10,8 +10,9 @@ type (
 		PhoneNumbers string
 		Email        string
 		Tags         string
-		Sms          string
+		Messages     string
 		Calls        string
+		MainLinkName string
 	}
 
 	ContactGroup struct {

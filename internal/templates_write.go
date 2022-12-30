@@ -1,8 +1,9 @@
 package internal
 
 import (
-	"github.com/sascha-andres/people2md/internal/types"
 	"os"
+
+	"github.com/sascha-andres/people2md/internal/types"
 )
 
 // WriteTemplates writes default templates to current directory
@@ -17,6 +18,12 @@ func WriteTemplates(db types.DataBuilder) error {
 		return err
 	}
 	if err := os.WriteFile("personal.tmpl", db.GetTemplateData(types.PersonalDataTemplate), 0600); err != nil {
+		return err
+	}
+	if err := os.WriteFile("calls.tmpl", db.GetTemplateData(types.CallsTemplate), 0600); err != nil {
+		return err
+	}
+	if err := os.WriteFile("messages.tmpl", db.GetTemplateData(types.MessagesTemplate), 0600); err != nil {
 		return err
 	}
 	return os.WriteFile("phone.tmpl", db.GetTemplateData(types.PhoneNumbersTemplate), 0600)
