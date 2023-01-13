@@ -32,7 +32,7 @@ type (
 		BuildCalls(calls sbrdata.Calls, c *Contact) string
 		BuildMessages(messages MessageList) string
 		BuildPersonalData(personalData *template.Template, c *Contact) string
-		BuildTags(tags string, c *Contact, groups []ContactGroup) string
+		BuildTags(tags, tagPrefix string, c *Contact, groups []ContactGroup) string
 		BuildAddresses(c *Contact, addresses *template.Template) string
 		BuildPhoneNumbers(c *Contact, phoneNumbers *template.Template) string
 		BuildEmailAddresses(c *Contact, emailAddresses *template.Template) string

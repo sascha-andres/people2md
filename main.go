@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/sascha-andres/people2md/internal/generator"
 	"log"
 	"os"
+
+	"github.com/sascha-andres/people2md/internal/generator"
 
 	"github.com/sascha-andres/flag"
 	"github.com/sascha-andres/people2md/internal"
@@ -17,6 +18,7 @@ var (
 	templateDirectory string
 	smsBackupFile     string
 	callBackupFile    string
+	tagPrefix         string
 	verbose           bool
 )
 
@@ -33,6 +35,7 @@ func init() {
 	flag.StringVar(&smsBackupFile, "sms", "", "path to sms backup file")
 	flag.StringVar(&callBackupFile, "calls", "", "path to call backup file")
 	flag.BoolVar(&verbose, "verbose", false, "print some output while operating")
+	flag.StringVar(&tagPrefix, "tag-prefix", "", "prefix tag with string")
 }
 
 func main() {
@@ -64,6 +67,7 @@ func main() {
 		internal.WithPathToGroups(pathToGroups),
 		internal.WithCallBackupFile(callBackupFile),
 		internal.WithVerbose(verbose),
+		internal.WithTagPrefix(tagPrefix),
 	)
 	if err != nil {
 		log.Fatal(err)

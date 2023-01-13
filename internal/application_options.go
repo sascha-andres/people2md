@@ -5,6 +5,13 @@ import (
 	"os"
 )
 
+func WithTagPrefix(prefix string) ApplicationOption {
+	return func(application *Application) error {
+		application.tagPrefix = prefix
+		return nil
+	}
+}
+
 func WithVerbose(verbose bool) ApplicationOption {
 	return func(application *Application) error {
 		application.verbose = verbose

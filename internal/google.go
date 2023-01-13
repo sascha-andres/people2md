@@ -16,7 +16,7 @@ import (
 	"github.com/sascha-andres/sbrdata"
 )
 
-func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, callData sbrdata.Calls, verbose bool, calls, messages *template.Template) {
+func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags, tagPrefix string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, callData sbrdata.Calls, verbose bool, calls, messages *template.Template) {
 	e := &types.Elements{}
 
 	e.ETag = c.Etag
@@ -40,7 +40,7 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags st
 	e.Calls = generator.BuildCalls(callData, c)
 	e.Messages = generator.BuildMessages(ml)
 	e.PersonalData = generator.BuildPersonalData(personalData, c)
-	e.Tags = generator.BuildTags(tags, c, groups)
+	e.Tags = generator.BuildTags(tags, tagPrefix, c, groups)
 	e.Addresses = generator.BuildAddresses(c, addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(c, phoneNumbers)
 	e.Email = generator.BuildEmailAddresses(c, emailAddresses)

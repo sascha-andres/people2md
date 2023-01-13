@@ -24,6 +24,7 @@ type (
 		smsBackupFile     string
 		callBackupFile    string
 		verbose           bool
+		tagPrefix         string
 	}
 
 	ApplicationOption func(application *Application) error
@@ -111,6 +112,7 @@ func (app *Application) Run() error {
 		}
 		Handle(&c, g, app.pathForFiles,
 			app.memberShipsAsTag,
+			app.tagPrefix,
 			templates.PersonalData,
 			groups,
 			templates.Addresses,
