@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	collectionFile    string
 	memberShipsAsTag  string
 	pathToContacts    string
 	pathToGroups      string
@@ -32,6 +33,7 @@ func init() {
 	flag.StringVar(&pathToGroups, "groups", "groups.json", "output of goobook dump_groups")
 	flag.StringVar(&pathForFiles, "output", ".", "store output in this directory")
 	flag.StringVar(&templateDirectory, "template-directory", "", "load templates from directcory")
+	flag.StringVar(&collectionFile, "collection-file", "", "get calls and messages from collection")
 	flag.StringVar(&smsBackupFile, "sms", "", "path to sms backup file")
 	flag.StringVar(&callBackupFile, "calls", "", "path to call backup file")
 	flag.BoolVar(&verbose, "verbose", false, "print some output while operating")
@@ -68,6 +70,7 @@ func main() {
 		internal.WithCallBackupFile(callBackupFile),
 		internal.WithVerbose(verbose),
 		internal.WithTagPrefix(tagPrefix),
+		internal.WithCollectionFile(collectionFile),
 	)
 	if err != nil {
 		log.Fatal(err)

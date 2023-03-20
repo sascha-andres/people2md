@@ -16,7 +16,7 @@ import (
 	"github.com/sascha-andres/sbrdata"
 )
 
-func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags, tagPrefix string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms sbrdata.Messages, callData sbrdata.Calls, verbose bool, calls, messages *template.Template) {
+func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags, tagPrefix string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms *sbrdata.Messages, callData *sbrdata.Calls, collection *sbrdata.Collection, verbose bool, calls, messages *template.Template) {
 	e := &types.Elements{}
 
 	e.ETag = c.Etag
@@ -27,18 +27,30 @@ func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags, t
 
 	// build message list
 	var ml types.MessageList
-	ml = addSmsToList(c, sms, ml)
-	ml = addMmsToList(c, sms, ml)
-	sort.Sort(ml)
+	if sms != nil {
+		ml = addSmsToList(c, sms, ml)
+		ml = addMmsToList(c, sms, ml)
+	}
 
 	if len(c.Names) > 0 {
 		e.MainLinkName = toFileName(c.Names[0].DisplayName)
 	} else {
 		e.MainLinkName = toFileName(c.Organizations[0].Name)
 	}
-
-	e.Calls = generator.BuildCalls(callData, c)
-	e.Messages = generator.BuildMessages(ml)
+	if callData != nil {
+		e.Calls = generator.BuildCalls(callData, c)
+	}
+	if collection != nil {
+		e.Calls = generator.BuildCalls(&sbrdata.Calls{
+			Call: collection.Calls,
+		}, c)
+		ml = addSmsToList(c, &sbrdata.Messages{Sms: collection.SMS}, ml)
+		ml = addMmsToList(c, &sbrdata.Messages{Mms: collection.MMS}, ml)
+	}
+	if len(ml) > 0 {
+		sort.Sort(ml)
+		e.Messages = generator.BuildMessages(ml)
+	}
 	e.PersonalData = generator.BuildPersonalData(personalData, c)
 	e.Tags = generator.BuildTags(tags, tagPrefix, c, groups)
 	e.Addresses = generator.BuildAddresses(c, addresses)
@@ -104,7 +116,7 @@ func writeBufferToFile(destinationPath string, buff bytes.Buffer, verbose bool) 
 	}
 }
 
-func addMmsToList(c *types.Contact, sms sbrdata.Messages, ml types.MessageList) types.MessageList {
+func addMmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList) types.MessageList {
 	for _, message := range sms.Mms {
 		include := false
 		for _, name := range c.Names {
@@ -154,7 +166,7 @@ func addMmsToList(c *types.Contact, sms sbrdata.Messages, ml types.MessageList) 
 	return ml
 }
 
-func addSmsToList(c *types.Contact, sms sbrdata.Messages, ml types.MessageList) types.MessageList {
+func addSmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList) types.MessageList {
 	for _, message := range sms.Sms {
 		include := false
 		for _, name := range c.Names {

@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"log"
 	"os"
 	"strings"
@@ -25,6 +26,7 @@ type (
 		callBackupFile    string
 		verbose           bool
 		tagPrefix         string
+		collectionFile    string
 	}
 
 	ApplicationOption func(application *Application) error
@@ -38,6 +40,9 @@ func NewApplication(opts ...ApplicationOption) (*Application, error) {
 		if err != nil {
 			return nil, err
 		}
+	}
+	if a.collectionFile != "" && (a.smsBackupFile != "" || a.callBackupFile != "") {
+		return nil, errors.New("either use collection of single files")
 	}
 	return a, nil
 }
@@ -90,6 +95,14 @@ func (app *Application) Run() error {
 		}
 	}
 
+	var collection *sbrdata.Collection
+	if app.collectionFile != "" {
+		collection, err = sbrdata.LoadCollection(app.collectionFile) // TODO this should fail if it does not exist
+		if err != nil {
+			return err
+		}
+	}
+
 	g, err := generator.GetGenerator()
 	if err != nil {
 		return err
@@ -119,8 +132,9 @@ func (app *Application) Run() error {
 			templates.PhoneNumbers,
 			templates.EmailAddresses,
 			templates.Outer,
-			sms,
-			calls,
+			&sms,
+			&calls,
+			collection,
 			app.verbose,
 			templates.Calls,
 			templates.Messages,

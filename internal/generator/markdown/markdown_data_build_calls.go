@@ -2,11 +2,12 @@ package markdown
 
 import (
 	"fmt"
+
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
 )
 
-func (mdData *MarkdownData) BuildCalls(calls sbrdata.Calls, c *types.Contact) string {
+func (mdData *MarkdownData) BuildCalls(calls *sbrdata.Calls, c *types.Contact) string {
 	result := ""
 
 	for _, call := range calls.Call {

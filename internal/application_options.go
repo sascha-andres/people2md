@@ -5,6 +5,13 @@ import (
 	"os"
 )
 
+func WithCollectionFile(file string) ApplicationOption {
+	return func(application *Application) error {
+		application.collectionFile = file
+		return nil
+	}
+}
+
 func WithTagPrefix(prefix string) ApplicationOption {
 	return func(application *Application) error {
 		application.tagPrefix = prefix

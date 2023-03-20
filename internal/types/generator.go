@@ -29,7 +29,8 @@ type (
 	MessageList []Message
 
 	DataBuilder interface {
-		BuildCalls(calls sbrdata.Calls, c *Contact) string
+		// BuildCalls must not access or rely on fields other than Calls
+		BuildCalls(calls *sbrdata.Calls, c *Contact) string
 		BuildMessages(messages MessageList) string
 		BuildPersonalData(personalData *template.Template, c *Contact) string
 		BuildTags(tags, tagPrefix string, c *Contact, groups []ContactGroup) string
