@@ -2,6 +2,7 @@ package markdown
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
@@ -21,6 +22,18 @@ func (mdData *MarkdownData) BuildCalls(calls *sbrdata.Calls, c *types.Contact) s
 		if !include {
 			for _, org := range c.Organizations {
 				include = org.Name == call.ContactName
+				if include {
+					break
+				}
+			}
+		}
+		if !include && call.Number != "" {
+			num := call.Number
+			if strings.HasPrefix(call.Number, "0") {
+				num = num[1:]
+			}
+			for _, p := range c.PhoneNumbers {
+				include = strings.HasSuffix(p.Value, num)
 				if include {
 					break
 				}
