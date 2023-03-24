@@ -27,6 +27,11 @@ func (mdData *MarkdownData) BuildCalls(calls *sbrdata.Calls, c *types.Contact) s
 				}
 			}
 		}
+		// TODO: check whether it is feasible to
+		//  include sth like contains with a cut off of
+		//  the last number (having 1234560 as the central
+		//  number but identify 12345678 also for this
+		//  contact
 		if !include && call.Number != "" {
 			num := call.Number
 			if strings.HasPrefix(call.Number, "0") {
