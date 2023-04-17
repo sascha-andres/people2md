@@ -5,28 +5,35 @@ import (
 	"os"
 )
 
-func WithCollectionFile(file string) ApplicationOption {
+func WithFileExtension(fileExtension string) Option {
+	return func(application *Application) error {
+		application.fileExtension = fileExtension
+		return nil
+	}
+}
+
+func WithCollectionFile(file string) Option {
 	return func(application *Application) error {
 		application.collectionFile = file
 		return nil
 	}
 }
 
-func WithTagPrefix(prefix string) ApplicationOption {
+func WithTagPrefix(prefix string) Option {
 	return func(application *Application) error {
 		application.tagPrefix = prefix
 		return nil
 	}
 }
 
-func WithVerbose(verbose bool) ApplicationOption {
+func WithVerbose(verbose bool) Option {
 	return func(application *Application) error {
 		application.verbose = verbose
 		return nil
 	}
 }
 
-func WithCallBackupFile(callBackupFile string) ApplicationOption {
+func WithCallBackupFile(callBackupFile string) Option {
 	return func(application *Application) error {
 		if callBackupFile == "" {
 			return nil
@@ -43,7 +50,7 @@ func WithCallBackupFile(callBackupFile string) ApplicationOption {
 	}
 }
 
-func WithSmsBackupFile(smsBackupFile string) ApplicationOption {
+func WithSmsBackupFile(smsBackupFile string) Option {
 	return func(application *Application) error {
 		if smsBackupFile == "" {
 			return nil
@@ -60,7 +67,7 @@ func WithSmsBackupFile(smsBackupFile string) ApplicationOption {
 	}
 }
 
-func WithPathForFiles(pathForFiles string) ApplicationOption {
+func WithPathForFiles(pathForFiles string) Option {
 	return func(application *Application) error {
 		if pathForFiles == "" {
 			return os.ErrNotExist
@@ -77,7 +84,7 @@ func WithPathForFiles(pathForFiles string) ApplicationOption {
 	}
 }
 
-func WithPathToGroups(pathToGroups string) ApplicationOption {
+func WithPathToGroups(pathToGroups string) Option {
 	return func(application *Application) error {
 		if pathToGroups == "" {
 			return os.ErrNotExist
@@ -94,7 +101,7 @@ func WithPathToGroups(pathToGroups string) ApplicationOption {
 	}
 }
 
-func WithPathToContacts(pathToContacts string) ApplicationOption {
+func WithPathToContacts(pathToContacts string) Option {
 	return func(application *Application) error {
 		if pathToContacts == "" {
 			return os.ErrNotExist
@@ -111,14 +118,14 @@ func WithPathToContacts(pathToContacts string) ApplicationOption {
 	}
 }
 
-func WithMembershipsAsTag(memberShipsAsTag string) ApplicationOption {
+func WithMembershipsAsTag(memberShipsAsTag string) Option {
 	return func(application *Application) error {
 		application.memberShipsAsTag = memberShipsAsTag
 		return nil
 	}
 }
 
-func WithTemplateDirectory(templateDirectory string) ApplicationOption {
+func WithTemplateDirectory(templateDirectory string) Option {
 	return func(application *Application) error {
 		application.templateDirectory = templateDirectory
 		return nil

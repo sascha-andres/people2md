@@ -20,6 +20,7 @@ var (
 	smsBackupFile     string
 	callBackupFile    string
 	tagPrefix         string
+	fileExtension     string
 	verbose           bool
 )
 
@@ -38,6 +39,7 @@ func init() {
 	flag.StringVar(&callBackupFile, "calls", "", "path to call backup file")
 	flag.BoolVar(&verbose, "verbose", false, "print some output while operating")
 	flag.StringVar(&tagPrefix, "tag-prefix", "", "prefix tag with string")
+	flag.StringVar(&fileExtension, "extension", "md", "file extension for output files")
 }
 
 func main() {
@@ -71,6 +73,7 @@ func main() {
 		internal.WithVerbose(verbose),
 		internal.WithTagPrefix(tagPrefix),
 		internal.WithCollectionFile(collectionFile),
+		internal.WithFileExtension(fileExtension),
 	)
 
 	if err != nil {

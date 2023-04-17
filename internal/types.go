@@ -26,13 +26,14 @@ type (
 		verbose           bool
 		tagPrefix         string
 		collectionFile    string
+		fileExtension     string
 	}
 
-	ApplicationOption func(application *Application) error
+	Option func(application *Application) error
 )
 
 // NewApplication returns the app root
-func NewApplication(opts ...ApplicationOption) (*Application, error) {
+func NewApplication(opts ...Option) (*Application, error) {
 	a := &Application{}
 	for i := range opts {
 		err := opts[i](a)

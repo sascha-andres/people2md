@@ -71,24 +71,25 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 			buff bytes.Buffer
 		)
 		_ = templates.Calls.Execute(&buff, e)
-		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Calls.md"), buff)
+		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Calls"), buff)
 	}
 	if len(e.Messages) > 0 {
 		var (
 			buff bytes.Buffer
 		)
 		_ = templates.Messages.Execute(&buff, e)
-		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Messages.md"), buff)
+		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Messages"), buff)
 	}
 
 	var buff bytes.Buffer
 	_ = templates.Outer.Execute(&buff, e)
-	app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+".md"), buff)
+	app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName), buff)
 }
 
 func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buffer) {
-	if _, err := os.Stat(destinationPath); errors.Is(err, os.ErrNotExist) {
-		_ = os.WriteFile(destinationPath, buff.Bytes(), 0600)
+	destinationPathWithExtension := destinationPath + "." + app.fileExtension
+	if _, err := os.Stat(destinationPathWithExtension); errors.Is(err, os.ErrNotExist) {
+		_ = os.WriteFile(destinationPathWithExtension, buff.Bytes(), 0600)
 		return
 	}
 
@@ -97,7 +98,7 @@ func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buf
 	hasher.Write(buff.Bytes())
 	hashNew := hasher.Sum(nil)
 
-	fileData, err := os.ReadFile(destinationPath)
+	fileData, err := os.ReadFile(destinationPathWithExtension)
 	if err == nil {
 		hasher.Reset()
 
@@ -111,14 +112,14 @@ func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buf
 
 	if res == 0 {
 		if app.verbose {
-			log.Printf("identical: %s", destinationPath)
+			log.Printf("identical: %s", destinationPathWithExtension)
 		}
 		return
 	}
 
-	log.Printf("replacing %s", destinationPath)
+	log.Printf("replacing %s", destinationPathWithExtension)
 
-	err = os.WriteFile(destinationPath, buff.Bytes(), 0600)
+	err = os.WriteFile(destinationPathWithExtension, buff.Bytes(), 0600)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "could not write file: %s", err)
 		return
