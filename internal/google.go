@@ -10,73 +10,83 @@ import (
 	"path"
 	"sort"
 	"strconv"
-	"text/template"
+	"strings"
 
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
 )
 
-func Handle(c *types.Contact, generator types.DataBuilder, pathForFiles, tags, tagPrefix string, personalData *template.Template, groups []types.ContactGroup, addresses, phoneNumbers, emailAddresses, outer *template.Template, sms *sbrdata.Messages, callData *sbrdata.Calls, collection *sbrdata.Collection, verbose bool, calls, messages *template.Template) {
+func (app *Application) handle(data types.DataReferences, generator types.DataBuilder, templates *types.Templates) {
 	e := &types.Elements{}
 
-	e.ETag = c.Etag
-	e.ResourceName = c.ResourceName
+	e.ETag = data.Contact.Etag
+	e.ResourceName = data.Contact.ResourceName
 
-	generator.SetETag(c.Etag)
-	generator.SetResourceName(c.ResourceName)
+	if 0 == len(data.Contact.Names) && 0 == len(data.Contact.Organizations) {
+		return
+	}
+	if len(data.Contact.Names) > 0 {
+		data.Contact.Names[0].DisplayName = strings.TrimSpace(data.Contact.Names[0].DisplayName)
+	}
+	if len(data.Contact.Organizations) > 0 {
+		data.Contact.Organizations[0].Name = strings.TrimSpace(data.Contact.Organizations[0].Name)
+	}
 
-	// build message list
+	generator.SetETag(data.Contact.Etag)
+	generator.SetResourceName(data.Contact.ResourceName)
+
 	var ml types.MessageList
-	if sms != nil {
-		ml = addSmsToList(c, sms, ml)
-		ml = addMmsToList(c, sms, ml)
-	}
 
-	if len(c.Names) > 0 {
-		e.MainLinkName = toFileName(c.Names[0].DisplayName)
+	if len(data.Contact.Names) > 0 {
+		e.MainLinkName = toFileName(data.Contact.Names[0].DisplayName)
 	} else {
-		e.MainLinkName = toFileName(c.Organizations[0].Name)
+		e.MainLinkName = toFileName(data.Contact.Organizations[0].Name)
 	}
-	if callData != nil {
-		e.Calls = generator.BuildCalls(callData, c)
-	}
-	if collection != nil {
+	if data.Collection != nil {
 		e.Calls = generator.BuildCalls(&sbrdata.Calls{
-			Call: collection.Calls,
-		}, c)
-		ml = addSmsToList(c, &sbrdata.Messages{Sms: collection.SMS}, ml)
-		ml = addMmsToList(c, &sbrdata.Messages{Mms: collection.MMS}, ml)
+			Call: data.Collection.Calls,
+		}, data.Contact)
+		ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
+		ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
+	} else {
+		if data.CallData != nil {
+			e.Calls = generator.BuildCalls(data.CallData, data.Contact)
+		}
+		if data.Sms != nil {
+			ml = addSmsToList(data.Contact, data.Sms, ml)
+			ml = addMmsToList(data.Contact, data.Sms, ml)
+		}
 	}
 	if len(ml) > 0 {
 		sort.Sort(ml)
 		e.Messages = generator.BuildMessages(ml)
 	}
-	e.PersonalData = generator.BuildPersonalData(personalData, c)
-	e.Tags = generator.BuildTags(tags, tagPrefix, c, groups)
-	e.Addresses = generator.BuildAddresses(c, addresses)
-	e.PhoneNumbers = generator.BuildPhoneNumbers(c, phoneNumbers)
-	e.Email = generator.BuildEmailAddresses(c, emailAddresses)
+	e.PersonalData = generator.BuildPersonalData(templates.PersonalData, data.Contact)
+	e.Tags = generator.BuildTags(data.Tags, data.TagPrefix, data.Contact, data.Groups)
+	e.Addresses = generator.BuildAddresses(data.Contact, templates.Addresses)
+	e.PhoneNumbers = generator.BuildPhoneNumbers(data.Contact, templates.PhoneNumbers)
+	e.Email = generator.BuildEmailAddresses(data.Contact, templates.EmailAddresses)
 	if len(e.Calls) > 0 {
 		var (
 			buff bytes.Buffer
 		)
-		_ = calls.Execute(&buff, e)
-		writeBufferToFile(path.Join(pathForFiles, e.MainLinkName+" Calls.md"), buff, verbose)
+		_ = templates.Calls.Execute(&buff, e)
+		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Calls.md"), buff)
 	}
 	if len(e.Messages) > 0 {
 		var (
 			buff bytes.Buffer
 		)
-		_ = messages.Execute(&buff, e)
-		writeBufferToFile(path.Join(pathForFiles, e.MainLinkName+" Messages.md"), buff, verbose)
+		_ = templates.Messages.Execute(&buff, e)
+		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Messages.md"), buff)
 	}
 
 	var buff bytes.Buffer
-	_ = outer.Execute(&buff, e)
-	writeBufferToFile(path.Join(pathForFiles, e.MainLinkName+".md"), buff, verbose)
+	_ = templates.Outer.Execute(&buff, e)
+	app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+".md"), buff)
 }
 
-func writeBufferToFile(destinationPath string, buff bytes.Buffer, verbose bool) {
+func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buffer) {
 	if _, err := os.Stat(destinationPath); errors.Is(err, os.ErrNotExist) {
 		_ = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 		return
@@ -100,15 +110,14 @@ func writeBufferToFile(destinationPath string, buff bytes.Buffer, verbose bool) 
 	}
 
 	if res == 0 {
-		if verbose {
+		if app.verbose {
 			log.Printf("identical: %s", destinationPath)
 		}
 		return
 	}
 
-	if verbose {
-		log.Printf("replacing %s", destinationPath)
-	}
+	log.Printf("replacing %s", destinationPath)
+
 	err = os.WriteFile(destinationPath, buff.Bytes(), 0600)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "could not write file: %s", err)

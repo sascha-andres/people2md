@@ -1,6 +1,6 @@
 github.com/sascha-andres/flag v0.3.1 h1:tp7d8I1zss+sbemznXcpIIcirz9hvP2amo3scmG3JJo=
 github.com/sascha-andres/flag v0.3.1/go.mod h1:HPqYfwaZ0Ue3fkSKsNWdmBqd+0uBSejBZBSCILgVnow=
-github.com/sascha-andres/sbrdata v1.1.0 h1:X6aNL/DUaimswaCkFhm4tEC2QKzqkd/MzLZI3B4Duz4=
-github.com/sascha-andres/sbrdata v1.1.0/go.mod h1:R5TLCVMkgAda+9XbZxElqgMu2f7iiN/JOHAa7WSB85g=
-golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0 h1:pVgRXcIictcr+lBQIFeiwuwtDIs4eL21OuM9nyAADmo=
-golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
+github.com/sascha-andres/sbrdata v1.1.1 h1:fgtexRdaFUvbMzI0SzKlGZ47opqUh2IbzkG8/IjaqPA=
+github.com/sascha-andres/sbrdata v1.1.1/go.mod h1:R5TLCVMkgAda+9XbZxElqgMu2f7iiN/JOHAa7WSB85g=
+golang.org/x/exp v0.0.0-20230321023759-10a507213a29 h1:ooxPy7fPvB4kwsA2h+iBNHkAbp/4JxTSwCmvdjEYmug=
+golang.org/x/exp v0.0.0-20230321023759-10a507213a29/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=

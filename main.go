@@ -54,7 +54,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			if err := internal.WriteTemplates(g); err != nil {
+			if err = internal.WriteTemplates(g); err != nil {
 				log.Fatal(err)
 			}
 			return
@@ -72,6 +72,7 @@ func main() {
 		internal.WithTagPrefix(tagPrefix),
 		internal.WithCollectionFile(collectionFile),
 	)
+
 	if err != nil {
 		log.Fatal(err)
 	}

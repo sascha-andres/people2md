@@ -8,20 +8,20 @@ import (
 	"github.com/sascha-andres/sbrdata"
 )
 
-func (mdData *MarkdownData) BuildCalls(calls *sbrdata.Calls, c *types.Contact) string {
+func (mdData *MarkdownData) BuildCalls(calls sbrdata.CallsData, c *types.Contact) string {
 	result := ""
 
-	for _, call := range calls.Call {
+	for _, call := range calls.GetCalls() {
 		include := false
 		for _, name := range c.Names {
-			include = name.DisplayName == call.ContactName
+			include = name.DisplayName == call.GetContactName()
 			if include {
 				break
 			}
 		}
 		if !include {
 			for _, org := range c.Organizations {
-				include = org.Name == call.ContactName
+				include = org.Name == call.GetContactName()
 				if include {
 					break
 				}
@@ -32,9 +32,9 @@ func (mdData *MarkdownData) BuildCalls(calls *sbrdata.Calls, c *types.Contact) s
 		//  the last number (having 1234560 as the central
 		//  number but identify 12345678 also for this
 		//  contact
-		if !include && call.Number != "" {
-			num := call.Number
-			if strings.HasPrefix(call.Number, "0") {
+		if !include && call.GetNumber() != "" {
+			num := call.GetNumber()
+			if strings.HasPrefix(num, "0") {
 				num = num[1:]
 			}
 			for _, p := range c.PhoneNumbers {
@@ -53,7 +53,7 @@ func (mdData *MarkdownData) BuildCalls(calls *sbrdata.Calls, c *types.Contact) s
 			if call.Type == "2" {
 				direction = "outgoing"
 			}
-			result = fmt.Sprintf("%s\n|%s|%s|%s|%s|", result, call.ReadableDate, direction, call.Number, call.Duration)
+			result = fmt.Sprintf("%s\n|%s|%s|%s|%s|", result, call.GetReadableDate(), direction, call.GetNumber(), call.GetDuration())
 		}
 	}
 
