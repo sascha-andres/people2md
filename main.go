@@ -42,14 +42,12 @@ func init() {
 	flag.StringVar(&fileExtension, "extension", "md", "file extension for output files")
 }
 
-func main() {
-	flag.Parse()
-
+func run() error {
 	arguments := os.Args
 	if len(arguments) >= 2 {
 		if arguments[1] == "help" {
 			flag.PrintDefaults()
-			return
+			return nil
 		}
 		if arguments[1] == "dump-templates" {
 			g, err := generator.GetGenerator()
@@ -59,7 +57,7 @@ func main() {
 			if err = internal.WriteTemplates(g); err != nil {
 				log.Fatal(err)
 			}
-			return
+			return nil
 		}
 	}
 
@@ -77,11 +75,16 @@ func main() {
 	)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	err = app.Run()
-	if err != nil {
+	return app.Run()
+}
+
+func main() {
+	flag.Parse()
+
+	if err := run(); err != nil {
 		log.Fatal(err)
 	}
 }
