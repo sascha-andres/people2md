@@ -7,4 +7,7 @@ require (
 	github.com/sascha-andres/sbrdata v1.1.1
 )
 
-require golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
+require (
+	github.com/sascha-andres/reuse v0.0.4 // indirect
+	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
+)

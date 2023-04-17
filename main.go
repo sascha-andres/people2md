@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/sascha-andres/people2md/internal/generator"
 
-	"github.com/sascha-andres/flag"
 	"github.com/sascha-andres/people2md/internal"
+	"github.com/sascha-andres/reuse/flag"
 )
 
 var (
@@ -44,6 +45,10 @@ func init() {
 
 func run() error {
 	arguments := os.Args
+
+	verbs := flag.GetVerbs()
+	fmt.Printf("%#v\n", verbs)
+
 	if len(arguments) >= 2 {
 		if arguments[1] == "help" {
 			flag.PrintDefaults()
@@ -60,6 +65,8 @@ func run() error {
 			return nil
 		}
 	}
+
+	return nil
 
 	app, err := internal.NewApplication(
 		internal.WithPathForFiles(pathForFiles),
