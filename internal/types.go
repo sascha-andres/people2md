@@ -16,17 +16,19 @@ type (
 
 	// Application is the root of the functionality except some infrastructure stuff
 	Application struct {
-		memberShipsAsTag  string
-		pathToContacts    string
-		pathToGroups      string
+		memberShipsAsTag string
+		pathToContacts   string
+		pathToGroups     string
+		pathForFiles     string
+		smsBackupFile    string
+		callBackupFile   string
+		verbose          bool
+		tagPrefix        string
+		collectionFile   string
+		fileExtension    string
+
 		templateDirectory string
-		pathForFiles      string
-		smsBackupFile     string
-		callBackupFile    string
-		verbose           bool
-		tagPrefix         string
-		collectionFile    string
-		fileExtension     string
+		templateGroup     string
 	}
 
 	Option func(application *Application) error
@@ -112,7 +114,8 @@ func (app *Application) Run() error {
 		return err
 	}
 
-	templates, err := NewTemplates(g, app.templateDirectory)
+	templates := &types.Templates{Directory: app.templateDirectory, Group: app.templateGroup}
+	err = templates.NewTemplates(g)
 	if err != nil {
 		return err
 	}

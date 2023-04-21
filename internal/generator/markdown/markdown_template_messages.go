@@ -14,4 +14,7 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 
 # Message log
 
-{{ .Messages }}`
+|Date|Direction|Text|
+|---|---|---|
+{{ range .MessageData }}|{{ .Date }}|{{ if eq .Direction "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Text }}|
+{{ end }}`

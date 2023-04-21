@@ -16,6 +16,58 @@ import (
 	"github.com/sascha-andres/sbrdata"
 )
 
+func sanitizePhoneNumber(number string) string {
+	number = strings.ReplaceAll(number, " ", "")
+	number = strings.ReplaceAll(number, "-", "")
+	number = strings.ReplaceAll(number, "/", "")
+	number = strings.ReplaceAll(number, "+", "00")
+	number = strings.ReplaceAll(number, "(0)", "")
+	return strings.TrimSpace(number)
+}
+
+func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
+	var result = &sbrdata.Calls{}
+	for _, call := range allCalls.Call {
+		include := false
+		for _, name := range c.Names {
+			include = name.DisplayName == call.GetContactName()
+			if include {
+				break
+			}
+		}
+		if !include {
+			for _, org := range c.Organizations {
+				include = org.Name == call.GetContactName()
+				if include {
+					break
+				}
+			}
+		}
+		// TODO: check whether it is feasible to
+		//  include sth like contains with a cut off of
+		//  the last number (having 1234560 as the central
+		//  number but identify 12345678 also for this
+		//  contact
+		if call.GetNumber() != "" {
+			num := sanitizePhoneNumber(call.GetNumber())
+			if strings.HasPrefix(num, "0") {
+				num = num[1:]
+			}
+			for _, p := range c.PhoneNumbers {
+				compare := sanitizePhoneNumber(p.Value)
+				include = strings.HasSuffix(compare, num)
+				if include {
+					break
+				}
+			}
+		}
+		if include {
+			result.Call = append(result.Call, call)
+		}
+	}
+	return result
+}
+
 func (app *Application) handle(data types.DataReferences, generator types.DataBuilder, templates *types.Templates) {
 	e := &types.Elements{}
 
@@ -43,37 +95,36 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 		e.MainLinkName = toFileName(data.Contact.Organizations[0].Name)
 	}
 	if data.Collection != nil {
-		e.Calls = generator.BuildCalls(&sbrdata.Calls{
+		filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
 			Call: data.Collection.Calls,
-		}, data.Contact)
+		})
+		e.CallData = filteredCalls
 		ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
 		ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
 	} else {
 		if data.CallData != nil {
-			e.Calls = generator.BuildCalls(data.CallData, data.Contact)
+			e.CallData = data.CallData
 		}
 		if data.Sms != nil {
 			ml = addSmsToList(data.Contact, data.Sms, ml)
 			ml = addMmsToList(data.Contact, data.Sms, ml)
 		}
 	}
-	if len(ml) > 0 {
-		sort.Sort(ml)
-		e.Messages = generator.BuildMessages(ml)
-	}
+	sort.Sort(ml)
+	e.MessageData = ml
 	e.PersonalData = generator.BuildPersonalData(templates.PersonalData, data.Contact)
 	e.Tags = generator.BuildTags(data.Tags, data.TagPrefix, data.Contact, data.Groups)
 	e.Addresses = generator.BuildAddresses(data.Contact, templates.Addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(data.Contact, templates.PhoneNumbers)
 	e.Email = generator.BuildEmailAddresses(data.Contact, templates.EmailAddresses)
-	if len(e.Calls) > 0 {
+	if len(e.CallData.Call) > 0 && templates.Calls != nil {
 		var (
 			buff bytes.Buffer
 		)
 		_ = templates.Calls.Execute(&buff, e)
 		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Calls"), buff)
 	}
-	if len(e.Messages) > 0 {
+	if len(e.MessageData) > 0 && templates.Messages != nil {
 		var (
 			buff bytes.Buffer
 		)
@@ -82,7 +133,7 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	}
 
 	var buff bytes.Buffer
-	_ = templates.Outer.Execute(&buff, e)
+	_ = templates.ContactSheet.Execute(&buff, e)
 	app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName), buff)
 }
 
@@ -169,11 +220,19 @@ func addMmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList)
 				UnixTimestamp: d,
 				Date:          message.ReadableDate,
 				Direction:     direction,
-				Text:          body,
+				Text:          sanitizeBody(body),
 			})
 		}
 	}
 	return ml
+}
+
+func sanitizeBody(body string) string {
+	result := strings.Replace(body, "<", "&lt;", -1)
+	result = strings.Replace(result, ">", "&gt;", -1)
+	result = strings.Replace(result, "\n", "<br />", -1)
+	result = strings.Replace(result, "[", "", -1)
+	return result
 }
 
 func addSmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList) types.MessageList {
@@ -206,7 +265,7 @@ func addSmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList)
 				UnixTimestamp: d,
 				Date:          message.ReadableDate,
 				Direction:     direction,
-				Text:          message.Body,
+				Text:          sanitizeBody(message.Body),
 			})
 		}
 	}

@@ -1,6 +1,6 @@
 package markdown
 
-const MarkDownTemplate string = `---
+const ContactSheetTemplate string = `---
 type: person
 disabled rules: [ all ]
 google:
@@ -21,7 +21,7 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 {{ .Email }}
 {{ end }}{{ if gt (len .Im) 0 }}## IM
 
-{{ .Im }}{{ end }}{{ if gt (len .Messages) 0 }}## SMS
+{{ .Im }}{{ end }}{{ if gt (len .MessageData) 0 }}## SMS
 
 [[{{.MainLinkName}} Messages]]
 

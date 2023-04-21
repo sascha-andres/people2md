@@ -1,5 +1,7 @@
 package types
 
+import "github.com/sascha-andres/sbrdata"
+
 type (
 	Elements struct {
 		ETag         string
@@ -10,9 +12,9 @@ type (
 		PhoneNumbers string
 		Email        string
 		Tags         string
-		Messages     string
-		Calls        string
 		MainLinkName string
+		CallData     *sbrdata.Calls
+		MessageData  MessageList
 	}
 
 	ContactGroup struct {

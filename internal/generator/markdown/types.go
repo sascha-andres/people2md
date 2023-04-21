@@ -7,6 +7,7 @@ import (
 )
 
 type (
+	// MarkdownData is the data structure for the markdown generator (Frontmatter, etc.)
 	MarkdownData struct {
 		ETag         string
 		ResourceName string
@@ -22,21 +23,24 @@ func (mdData *MarkdownData) SetResourceName(rn string) {
 }
 
 func (mdData *MarkdownData) GetTemplate(id types.TemplateIdentifier) *template.Template {
+	funcMap := template.FuncMap{
+		"replace": types.TemplateReplace,
+	}
 	switch id {
-	case types.OuterTemplate:
-		return template.Must(template.New("outer").Parse(MarkDownTemplate))
+	case types.ContactSheetTemplate:
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(ContactSheetTemplate))
 	case types.AddressesTemplate:
-		return template.Must(template.New("outer").Parse(AddressesTemplate))
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(AddressesTemplate))
 	case types.PersonalDataTemplate:
-		return template.Must(template.New("outer").Parse(PersonalDataTemplate))
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(PersonalDataTemplate))
 	case types.PhoneNumbersTemplate:
-		return template.Must(template.New("outer").Parse(PhoneNumbersTemplate))
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(PhoneNumbersTemplate))
 	case types.EmailAddressesTemplate:
-		return template.Must(template.New("outer").Parse(EmailsTemplate))
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(EmailsTemplate))
 	case types.CallsTemplate:
-		return template.Must(template.New("outer").Parse(MarkDownTemplateCalls))
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(MarkDownTemplateCalls))
 	case types.MessagesTemplate:
-		return template.Must(template.New("outer").Parse(MarkDownTemplateMessages))
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(MarkDownTemplateMessages))
 	}
 
 	return nil
@@ -44,8 +48,8 @@ func (mdData *MarkdownData) GetTemplate(id types.TemplateIdentifier) *template.T
 
 func (mdData *MarkdownData) GetTemplateData(id types.TemplateIdentifier) []byte {
 	switch id {
-	case types.OuterTemplate:
-		return []byte(MarkDownTemplate)
+	case types.ContactSheetTemplate:
+		return []byte(ContactSheetTemplate)
 	case types.AddressesTemplate:
 		return []byte(AddressesTemplate)
 	case types.PersonalDataTemplate:

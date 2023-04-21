@@ -23,7 +23,9 @@ type (
 
 	// Templates contains templates used to render
 	Templates struct {
-		Outer          *template.Template
+		Group          string
+		Directory      string
+		ContactSheet   *template.Template
 		Addresses      *template.Template
 		PersonalData   *template.Template
 		PhoneNumbers   *template.Template
@@ -45,9 +47,6 @@ type (
 
 	// DataBuilder provides the contract how to construct data
 	DataBuilder interface {
-		// BuildCalls must not access or rely on fields other than Calls
-		BuildCalls(calls sbrdata.CallsData, c *Contact) string
-		BuildMessages(messages MessageList) string
 		BuildPersonalData(personalData *template.Template, c *Contact) string
 		BuildTags(tags, tagPrefix string, c *Contact, groups []ContactGroup) string
 		BuildAddresses(c *Contact, addresses *template.Template) string

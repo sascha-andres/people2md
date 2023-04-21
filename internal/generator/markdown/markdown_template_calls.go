@@ -14,4 +14,8 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 
 # Call log
 
-{{ .Calls }}`
+|Date|Direction|Number|Duration (s)|
+|---|---|---|---|
+{{ range .CallData.Call }}|{{ .ReadableDate }}|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|
+{{ end }}
+`

@@ -131,3 +131,10 @@ func WithTemplateDirectory(templateDirectory string) Option {
 		return nil
 	}
 }
+
+func WithTemplateGroup(templateGroup string) Option {
+	return func(application *Application) error {
+		application.templateGroup = templateGroup
+		return nil
+	}
+}
