@@ -20,6 +20,7 @@ func sanitizePhoneNumber(number string) string {
 	number = strings.ReplaceAll(number, " ", "")
 	number = strings.ReplaceAll(number, "-", "")
 	number = strings.ReplaceAll(number, "/", "")
+	number = strings.ReplaceAll(number, "+49", "0")
 	number = strings.ReplaceAll(number, "+", "00")
 	number = strings.ReplaceAll(number, "(0)", "")
 	return strings.TrimSpace(number)
