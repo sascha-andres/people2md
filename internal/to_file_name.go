@@ -11,6 +11,7 @@ var replacements = map[string]string{
 	"Ö": "Oe",
 	"Ü": "Ue",
 	"ß": "ss",
+  ":": "",
 }
 
 // toFileName converts a string to a valid file name.
