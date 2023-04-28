@@ -25,6 +25,6 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 
 [[{{.MainLinkName}} Messages]]
 
-{{ end }}{{ if gt (len .Calls) 0 }}## Call log
+{{ end }}{{ if gt (len .CallData.Call) 0 }}## Call log
 
 [[{{.MainLinkName}} Calls]]{{ end }}`
