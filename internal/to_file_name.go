@@ -4,14 +4,14 @@ import "strings"
 
 var replacements = map[string]string{
 	" ": " ",
-	"ä": "ae",
-	"ö": "oe",
-	"ü": "ue",
-	"Ä": "Ae",
-	"Ö": "Oe",
-	"Ü": "Ue",
+	//"ä": "ae",
+	//"ö": "oe",
+	//"ü": "ue",
+	//"Ä": "Ae",
+	//"Ö": "Oe",
+	//"Ü": "Ue",
 	"ß": "ss",
-  ":": "",
+	":": "",
 }
 
 // toFileName converts a string to a valid file name.
