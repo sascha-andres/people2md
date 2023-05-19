@@ -58,12 +58,3 @@ type (
 		GetTemplateData(id TemplateIdentifier) []byte
 	}
 )
-
-// Len of MessageList
-func (ml MessageList) Len() int { return len(ml) }
-
-// Swap two messaged
-func (ml MessageList) Swap(i, j int) { ml[i], ml[j] = ml[j], ml[i] }
-
-// Less determines whether i < j for a message (unix timestamp used)
-func (ml MessageList) Less(i, j int) bool { return ml[i].UnixTimestamp < ml[j].UnixTimestamp }

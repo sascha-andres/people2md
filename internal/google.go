@@ -8,12 +8,12 @@ import (
 	"log"
 	"os"
 	"path"
-	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
+	"golang.org/x/exp/slices"
 )
 
 func sanitizePhoneNumber(number string) string {
@@ -99,6 +99,9 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 		filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
 			Call: data.Collection.Calls,
 		})
+		slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) bool {
+			return i.Date > j.Date
+		})
 		e.CallData = filteredCalls
 		ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
 		ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
@@ -111,7 +114,9 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 			ml = addMmsToList(data.Contact, data.Sms, ml)
 		}
 	}
-	sort.Sort(ml)
+	slices.SortFunc(ml, func(i, j types.Message) bool {
+		return i.UnixTimestamp > j.UnixTimestamp
+	})
 	e.MessageData = ml
 	e.PersonalData = generator.BuildPersonalData(templates.PersonalData, data.Contact)
 	e.Tags = generator.BuildTags(data.Tags, data.TagPrefix, data.Contact, data.Groups)
