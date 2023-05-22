@@ -1,6 +1,4 @@
-package markdown
-
-const ContactSheetTemplate string = `---
+---
 type: person
 disabled rules: [ all ]
 google:
@@ -26,4 +24,4 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 
 {{ end }}{{ if gt (len .CallData.Call) 0 }}## Call log
 
-[[{{.MainLinkName}} Calls]]{{ end }}`
+[[{{.MainLinkName}} Calls]]{{ end }}

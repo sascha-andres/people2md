@@ -1,6 +1,4 @@
-package markdown
-
-const MarkDownTemplateCalls string = `---
+---
 type: calls
 disabled rules: [ all ]
 google:
@@ -17,4 +15,3 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 |---|---|---|---|
 {{ range .CallData.Call }}|{{ .ReadableDate }}|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|
 {{ end }}
-`

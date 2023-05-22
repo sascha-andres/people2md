@@ -1,0 +1,80 @@
+#let title = [
+{{.MainLinkName}}
+]
+
+#set page(
+  paper: "a4",
+  header: align(center, title),
+)
+
+#set text(
+font: "Berkeley Mono",
+size: 12pt,
+)
+
+// in typ we would need to iterate, so this is going to be a CR Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
+
+{{ .PersonalData }}{{ if gt (len .Addresses) 0 }}== Address
+
+{{ .Addresses }}
+{{ end }}{{ if gt (len .PhoneNumbers) 0 }}== Phone numbers
+
+{{ .PhoneNumbers }}
+{{ end }}{{ if gt (len .Email) 0 }}== EMail
+
+{{ .Email }}
+{{ end }}{{ if gt (len .Im) 0 }}== IM
+
+{{ .Im }}{{ end }}{{ if gt (len .CallData.Call) 0 }}#pagebreak()
+== Calls
+#set text(
+  font: "Berkeley Mono",
+  size: 8pt,
+)
+#table(
+  columns: (auto, auto, auto, auto),
+  inset: 10pt,
+  align: horizon,
+  [Date], [Direction], [Number], [Duration (s)]{{ range .CallData.Call }},
+  [
+    {{ .ReadableDate }}
+  ],
+  [
+    {{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}
+  ],
+  [
+    {{ .Number }}
+  ],
+  [
+    {{ .Duration }}
+  ]{{ end }}
+){{ end }}
+#set text(
+  font: "Berkeley Mono",
+  size: 12pt,
+)
+{{ if gt (len .MessageData) 0 }}#pagebreak()
+#set text(
+  font: "Berkeley Mono",
+  size: 8pt,
+)
+== Messages
+#table(
+  columns: (auto, auto, auto),
+  inset: 10pt,
+  align: horizon,
+  [Date], [Direction], [Message]{{ range .MessageData }},
+  [
+    {{ .Date }}
+  ],
+  [
+    {{ .Direction }}
+  ],
+  [
+    {{ replace .Text "<br />" " \\" }}
+  ]{{ end }}
+)
+#set text(
+  font: "Berkeley Mono",
+  size: 12pt,
+){{ end }}
