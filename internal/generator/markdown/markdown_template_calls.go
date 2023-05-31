@@ -16,5 +16,4 @@ Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 |Date|Direction|Number|Duration (s)|
 |---|---|---|---|
 {{ range .CallData.Call }}|{{ .ReadableDate }}|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|
-{{ end }}
-`
+{{ end }}`
