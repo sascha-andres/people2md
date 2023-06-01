@@ -44,7 +44,7 @@ func NewApplication(opts ...Option) (*Application, error) {
 		}
 	}
 	if a.collectionFile != "" && (a.smsBackupFile != "" || a.callBackupFile != "") {
-		return nil, errors.New("either use collection of single files")
+		return nil, errors.New("either use collection or single files")
 	}
 	return a, nil
 }
