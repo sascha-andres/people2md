@@ -3,6 +3,8 @@ package markdown
 const MarkDownTemplateMessages string = `---
 type: messages
 disabled rules: [ all ]
+date created: {{ .DateCreated }}
+date modified: {{ .DateModified }}
 google:
   resource_name: {{ .ResourceName }}
 ---

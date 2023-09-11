@@ -13,6 +13,8 @@ type (
 		Email        string
 		Tags         string
 		MainLinkName string
+		DateCreated  string
+		DateModified string
 		CallData     *sbrdata.Calls
 		MessageData  MessageList
 	}
