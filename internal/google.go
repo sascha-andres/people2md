@@ -10,6 +10,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
@@ -123,8 +124,8 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	e.Addresses = generator.BuildAddresses(data.Contact, templates.Addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(data.Contact, templates.PhoneNumbers)
 	e.Email = generator.BuildEmailAddresses(data.Contact, templates.EmailAddresses)
-	//e.DateModified = time.Now().UTC().Format("Monday, January 2 2006, 3:04:05 PM")
-	//e.DateCreated = time.Now().UTC().Format("Monday, January 2 2006, 3:04:05 PM")
+	e.DateModified = time.Now().UTC().Format("Monday, January 2 2006, 3:04:05 PM")
+	e.DateCreated = time.Now().UTC().Format("Monday, January 2 2006, 3:04:05 PM")
 	if len(e.CallData.Call) > 0 && templates.Calls != nil {
 		var (
 			buff bytes.Buffer
