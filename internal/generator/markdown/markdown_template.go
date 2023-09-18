@@ -3,8 +3,6 @@ package markdown
 const ContactSheetTemplate string = `---
 type: person
 disabled rules: [ all ]
-date created: {{ .DateCreated }}
-date modified: {{ .DateModified }}
 google:
   resource_name: {{ .ResourceName }}
 ---
