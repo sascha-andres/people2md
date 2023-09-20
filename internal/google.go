@@ -11,9 +11,10 @@ import (
 	"strconv"
 	"strings"
 
+	"slices"
+
 	"github.com/sascha-andres/people2md/internal/types"
 	"github.com/sascha-andres/sbrdata"
-	"golang.org/x/exp/slices"
 )
 
 func sanitizePhoneNumber(number string) string {
@@ -50,6 +51,9 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 		//  number but identify 12345678 also for this
 		//  contact
 		if call.GetNumber() != "" {
+			if strings.Contains(call.GetNumber(), "31454") {
+				log.Printf("found 31454 and contact is %s", call.GetContactName())
+			}
 			num := sanitizePhoneNumber(call.GetNumber())
 			if strings.HasPrefix(num, "0") {
 				num = num[1:]
@@ -99,8 +103,16 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 		filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
 			Call: data.Collection.Calls,
 		})
-		slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) bool {
-			return i.Date > j.Date
+		slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) int {
+			a, err := strconv.Atoi(i.GetDate())
+			if err != nil {
+				return 0
+			}
+			b, err := strconv.Atoi(j.GetDate())
+			if err != nil {
+				return 0
+			}
+			return b - a
 		})
 		e.CallData = filteredCalls
 		ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
@@ -114,8 +126,14 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 			ml = addMmsToList(data.Contact, data.Sms, ml)
 		}
 	}
-	slices.SortFunc(ml, func(i, j types.Message) bool {
-		return i.UnixTimestamp > j.UnixTimestamp
+	slices.SortFunc(ml, func(i, j types.Message) int {
+		if i.UnixTimestamp < j.UnixTimestamp {
+			return -1
+		}
+		if i.UnixTimestamp > j.UnixTimestamp {
+			return 1
+		}
+		return 0
 	})
 	e.MessageData = ml
 	e.PersonalData = generator.BuildPersonalData(templates.PersonalData, data.Contact)

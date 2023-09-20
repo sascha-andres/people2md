@@ -1,6 +1,6 @@
-github.com/sascha-andres/reuse v0.0.5 h1:jYy4Eicx3yRFI+mkPqLWrw71Sm5j8p1LrZMZMWEGi9o=
-github.com/sascha-andres/reuse v0.0.5/go.mod h1:kWmLAAMzFLvPlUjQwFCZ/ohAzvQtlvUzpA4/Bpgrf4U=
+github.com/sascha-andres/reuse v0.3.0 h1:OsIQrNXOTT6lDGX7f0pcspfTQkJFvaAjunW1ORdWgf0=
+github.com/sascha-andres/reuse v0.3.0/go.mod h1:c/lUYnVAHCltEOte/sKuCtrrEb/9dzlZWLgOoWeIOTU=
 github.com/sascha-andres/sbrdata v1.1.1 h1:fgtexRdaFUvbMzI0SzKlGZ47opqUh2IbzkG8/IjaqPA=
 github.com/sascha-andres/sbrdata v1.1.1/go.mod h1:R5TLCVMkgAda+9XbZxElqgMu2f7iiN/JOHAa7WSB85g=
-golang.org/x/exp v0.0.0-20230419192730-864b3d6c5c2c h1:HDdYQYKOkvJT/Plb5HwJJywTVyUnIctjQm6XSnZ/0CY=
-golang.org/x/exp v0.0.0-20230419192730-864b3d6c5c2c/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
+golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=
+golang.org/x/exp v0.0.0-20230905200255-921286631fa9/go.mod h1:S2oDrQGGwySpoQPVqRShND87VCbxmc6bL1Yd2oYrm6k=
