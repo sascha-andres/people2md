@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -17,6 +16,8 @@ import (
 	"github.com/sascha-andres/sbrdata"
 )
 
+// sanitizePhoneNumber removes all characters that should not be part of a phone number
+// and tries to format the number to a German number
 func sanitizePhoneNumber(number string) string {
 	number = strings.ReplaceAll(number, " ", "")
 	number = strings.ReplaceAll(number, "-", "")
@@ -27,6 +28,7 @@ func sanitizePhoneNumber(number string) string {
 	return strings.TrimSpace(number)
 }
 
+// filterCalls returns a list of calls that are related to the contact
 func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 	var result = &sbrdata.Calls{}
 	for _, call := range allCalls.Call {
@@ -51,9 +53,6 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 		//  number but identify 12345678 also for this
 		//  contact
 		if call.GetNumber() != "" {
-			if strings.Contains(call.GetNumber(), "31454") {
-				log.Printf("found 31454 and contact is %s", call.GetContactName())
-			}
 			num := sanitizePhoneNumber(call.GetNumber())
 			if strings.HasPrefix(num, "0") {
 				num = num[1:]
@@ -73,6 +72,7 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 	return result
 }
 
+// handle is running the generation process
 func (app *Application) handle(data types.DataReferences, generator types.DataBuilder, templates *types.Templates) {
 	e := &types.Elements{}
 
@@ -146,33 +146,36 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 			buff bytes.Buffer
 		)
 		_ = templates.Calls.Execute(&buff, e)
-		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Calls"), buff)
+		app.writeBufferToFile(buff, path.Join(data.PathForFiles, e.MainLinkName+" Calls"))
 	}
 	if len(e.MessageData) > 0 && templates.Messages != nil {
 		var (
 			buff bytes.Buffer
 		)
 		_ = templates.Messages.Execute(&buff, e)
-		app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName+" Messages"), buff)
+		app.writeBufferToFile(buff, path.Join(data.PathForFiles, e.MainLinkName+" Messages"))
 	}
 
-	var buff bytes.Buffer
-	_ = templates.ContactSheet.Execute(&buff, e)
-	app.writeBufferToFile(path.Join(data.PathForFiles, e.MainLinkName), buff)
+	var mainContactSheetBuffer bytes.Buffer
+	_ = templates.ContactSheet.Execute(&mainContactSheetBuffer, e)
+	app.writeBufferToFile(mainContactSheetBuffer, path.Join(data.PathForFiles, e.MainLinkName))
+
+	destinationPath := path.Join(data.PathForFiles, e.MainLinkName+" Notes")
+	if _, err := os.Stat(destinationPath + "." + app.fileExtension); errors.Is(err, os.ErrNotExist) {
+		var notesSheetBuffer bytes.Buffer
+		_ = templates.NotesSheet.Execute(&notesSheetBuffer, e)
+		app.writeBufferToFile(notesSheetBuffer, destinationPath)
+	}
 }
 
-func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buffer) {
-	destinationPathWithExtension := destinationPath + "." + app.fileExtension
-	if _, err := os.Stat(destinationPathWithExtension); errors.Is(err, os.ErrNotExist) {
-		_ = os.WriteFile(destinationPathWithExtension, buff.Bytes(), 0600)
-		return
-	}
-
+// writeBufferToFile writes the buffer to a file
+func (app *Application) writeBufferToFile(buff bytes.Buffer, destinationPath string) {
 	var res int = 1
 	hasher := sha256.New()
 	hasher.Write(buff.Bytes())
 	hashNew := hasher.Sum(nil)
 
+	destinationPathWithExtension := destinationPath + "." + app.fileExtension
 	fileData, err := os.ReadFile(destinationPathWithExtension)
 	if err == nil {
 		hasher.Reset()
@@ -182,7 +185,7 @@ func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buf
 
 		res = bytes.Compare(hashOld, hashNew)
 	} else {
-		_, _ = fmt.Fprintf(os.Stderr, "could not read existing file: %s", err)
+		log.Printf("could not read existing file: %s", err)
 	}
 
 	if res == 0 {
@@ -196,11 +199,12 @@ func (app *Application) writeBufferToFile(destinationPath string, buff bytes.Buf
 
 	err = os.WriteFile(destinationPathWithExtension, buff.Bytes(), 0600)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "could not write file: %s", err)
+		log.Printf("could not write file: %s", err)
 		return
 	}
 }
 
+// addMmsToList adds mms messages to the message list
 func addMmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList) types.MessageList {
 	for _, message := range sms.Mms {
 		include := false
@@ -251,6 +255,7 @@ func addMmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList)
 	return ml
 }
 
+// sanitizeBody sanitizes the body of a message
 func sanitizeBody(body string) string {
 	result := strings.Replace(body, "<", "&lt;", -1)
 	result = strings.Replace(result, ">", "&gt;", -1)
@@ -259,6 +264,7 @@ func sanitizeBody(body string) string {
 	return result
 }
 
+// addSmsToList adds sms messages to the message list
 func addSmsToList(c *types.Contact, sms *sbrdata.Messages, ml types.MessageList) types.MessageList {
 	for _, message := range sms.Sms {
 		include := false

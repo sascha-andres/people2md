@@ -28,6 +28,7 @@ func loadTemplates(directory string, id TemplateIdentifier) (*template.Template,
 // the templates used to render the contacts
 func (t *Templates) NewTemplates(generator DataBuilder) error {
 	t.ContactSheet = generator.GetTemplate(ContactSheetTemplate)
+	t.NotesSheet = generator.GetTemplate(NotesSheetTemplate)
 	t.Addresses = generator.GetTemplate(AddressesTemplate)
 	t.PersonalData = generator.GetTemplate(PersonalDataTemplate)
 	t.PhoneNumbers = generator.GetTemplate(PhoneNumbersTemplate)
@@ -54,6 +55,10 @@ func (t *Templates) NewTemplates(generator DataBuilder) error {
 		return err
 	}
 	t.ContactSheet, err = loadTemplates(directory, ContactSheetTemplate)
+	if err != nil {
+		return err
+	}
+	t.NotesSheet, err = loadTemplates(directory, NotesSheetTemplate)
 	if err != nil {
 		return err
 	}

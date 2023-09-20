@@ -41,6 +41,8 @@ func (mdData *MarkdownData) GetTemplate(id types.TemplateIdentifier) *template.T
 		return template.Must(template.New("outer").Funcs(funcMap).Parse(MarkDownTemplateCalls))
 	case types.MessagesTemplate:
 		return template.Must(template.New("outer").Funcs(funcMap).Parse(MarkDownTemplateMessages))
+	case types.NotesSheetTemplate:
+		return template.Must(template.New("outer").Funcs(funcMap).Parse(NotesSheetTemplate))
 	}
 
 	return nil

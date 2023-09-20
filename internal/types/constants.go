@@ -2,16 +2,18 @@ package types
 
 const (
 	ContactSheetTemplate   TemplateIdentifier = iota
-	AddressesTemplate      TemplateIdentifier = iota + 1
-	PersonalDataTemplate   TemplateIdentifier = iota + 2
-	PhoneNumbersTemplate   TemplateIdentifier = iota + 3
-	EmailAddressesTemplate TemplateIdentifier = iota + 4
-	CallsTemplate          TemplateIdentifier = iota + 5
-	MessagesTemplate       TemplateIdentifier = iota + 6
+	AddressesTemplate      TemplateIdentifier = iota * 2
+	PersonalDataTemplate   TemplateIdentifier = iota * 2
+	PhoneNumbersTemplate   TemplateIdentifier = iota * 2
+	EmailAddressesTemplate TemplateIdentifier = iota * 2
+	CallsTemplate          TemplateIdentifier = iota * 2
+	MessagesTemplate       TemplateIdentifier = iota * 2
+	NotesSheetTemplate     TemplateIdentifier = iota * 2
 )
 
 var TemplateNames = map[TemplateIdentifier]string{
 	ContactSheetTemplate:   "contactsheet",
+	NotesSheetTemplate:     "notes",
 	AddressesTemplate:      "addresses",
 	PersonalDataTemplate:   "personal",
 	PhoneNumbersTemplate:   "phone",
@@ -22,6 +24,7 @@ var TemplateNames = map[TemplateIdentifier]string{
 
 var TemplateTypes = map[string]TemplateIdentifier{
 	"contactsheet": ContactSheetTemplate,
+	"notes":        NotesSheetTemplate,
 	"addresses":    AddressesTemplate,
 	"personal":     PersonalDataTemplate,
 	"phone":        PhoneNumbersTemplate,

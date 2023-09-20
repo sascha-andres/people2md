@@ -3,7 +3,7 @@
     <module name="people2md" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-i" />
-    <parameters value="-tag-prefix contact/ -tags infront,headhunter,family,syzygy,medical,gofrm,friends,restaurant,grocery -output &quot;$USER_HOME$/Documents/Obsidian/personal/00-09 Personal/02 Contacts&quot; -collection-file $USER_HOME$/Documents/collection.json -verbose" />
+    <parameters value="-verbose" />
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
@@ -15,6 +15,7 @@
       </ENTRIES>
     </EXTENSION>
     <kind value="FILE" />
+    <package value="github.com/sascha-andres/people2md" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/main.go" />
     <method v="2" />

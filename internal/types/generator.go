@@ -25,6 +25,7 @@ type (
 	Templates struct {
 		Group          string
 		Directory      string
+		NotesSheet     *template.Template
 		ContactSheet   *template.Template
 		Addresses      *template.Template
 		PersonalData   *template.Template
