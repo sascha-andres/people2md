@@ -5,6 +5,13 @@ import (
 	"os"
 )
 
+func WithDryRun(dryRun bool) Option {
+	return func(application *Application) error {
+		application.dryRun = dryRun
+		return nil
+	}
+}
+
 func WithFileExtension(fileExtension string) Option {
 	return func(application *Application) error {
 		application.fileExtension = fileExtension
@@ -29,40 +36,6 @@ func WithTagPrefix(prefix string) Option {
 func WithVerbose(verbose bool) Option {
 	return func(application *Application) error {
 		application.verbose = verbose
-		return nil
-	}
-}
-
-func WithCallBackupFile(callBackupFile string) Option {
-	return func(application *Application) error {
-		if callBackupFile == "" {
-			return nil
-		}
-		fi, err := os.Stat(callBackupFile)
-		if err != nil {
-			return err
-		}
-		if fi.IsDir() {
-			return errors.New("specified path for call backup is a directory")
-		}
-		application.callBackupFile = callBackupFile
-		return nil
-	}
-}
-
-func WithSmsBackupFile(smsBackupFile string) Option {
-	return func(application *Application) error {
-		if smsBackupFile == "" {
-			return nil
-		}
-		fi, err := os.Stat(smsBackupFile)
-		if err != nil {
-			return err
-		}
-		if fi.IsDir() {
-			return errors.New("specified path is a directory")
-		}
-		application.smsBackupFile = smsBackupFile
 		return nil
 	}
 }

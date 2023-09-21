@@ -16,8 +16,6 @@ type (
 		Tags         string
 		TagPrefix    string
 		Groups       []ContactGroup
-		Sms          *sbrdata.Messages
-		CallData     *sbrdata.Calls
 		Collection   *sbrdata.Collection
 	}
 

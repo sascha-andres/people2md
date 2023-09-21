@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	collectionFile, callBackupFile, smsBackupFile, pathToGroups, pathToContacts string
-	memberShipsAsTag, tagPrefix                                                 string
-	verbose                                                                     bool
-	pathForFiles, fileExtension                                                 string
-	templateGroup, templateType, templateDirectory                              string
+	collectionFile, pathToGroups, pathToContacts   string
+	memberShipsAsTag, tagPrefix                    string
+	verbose, dryRun                                bool
+	pathForFiles, fileExtension                    string
+	templateGroup, templateType, templateDirectory string
 )
 
 func init() {
@@ -31,10 +31,9 @@ func init() {
 	flag.StringVar(&pathToContacts, "contacts", "contacts.json", "output of goobook dump_contacts")
 	flag.StringVar(&pathToGroups, "groups", "groups.json", "output of goobook dump_groups")
 	flag.StringVar(&collectionFile, "collection-file", "", "get calls and messages from collection")
-	flag.StringVar(&smsBackupFile, "sms", "", "path to sms backup file")
-	flag.StringVar(&callBackupFile, "calls", "", "path to call backup file")
 	// output flags
 	flag.StringVar(&pathForFiles, "output", ".", "store output in this directory")
+	flag.BoolVar(&dryRun, "dry-run", false, "do not write files")
 	flag.BoolVar(&verbose, "verbose", false, "print some output while operating")
 	flag.StringVar(&fileExtension, "extension", "md", "file extension for output files")
 }
@@ -60,14 +59,13 @@ func run() error {
 		internal.WithTagPrefix(tagPrefix),
 		// data handling arguments
 		internal.WithPathToContacts(pathToContacts),
-		internal.WithSmsBackupFile(smsBackupFile),
 		internal.WithPathToGroups(pathToGroups),
-		internal.WithCallBackupFile(callBackupFile),
 		internal.WithCollectionFile(collectionFile),
 		// output arguments
 		internal.WithPathForFiles(pathForFiles),
 		internal.WithVerbose(verbose),
 		internal.WithFileExtension(fileExtension),
+		internal.WithDryRun(dryRun),
 	)
 
 	if err != nil {

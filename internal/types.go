@@ -2,7 +2,6 @@ package internal
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"log"
 	"os"
@@ -16,19 +15,17 @@ type (
 
 	// Application is the root of the functionality except some infrastructure stuff
 	Application struct {
-		memberShipsAsTag string
-		pathToContacts   string
-		pathToGroups     string
-		pathForFiles     string
-		smsBackupFile    string
-		callBackupFile   string
-		verbose          bool
-		tagPrefix        string
-		collectionFile   string
-		fileExtension    string
-
+		memberShipsAsTag  string
+		pathToContacts    string
+		pathToGroups      string
+		pathForFiles      string
+		verbose           bool
+		tagPrefix         string
+		collectionFile    string
+		fileExtension     string
 		templateDirectory string
 		templateGroup     string
+		dryRun            bool
 	}
 
 	Option func(application *Application) error
@@ -43,8 +40,8 @@ func NewApplication(opts ...Option) (*Application, error) {
 			return nil, err
 		}
 	}
-	if a.collectionFile != "" && (a.smsBackupFile != "" || a.callBackupFile != "") {
-		return nil, errors.New("either use collection or single files")
+	if a.collectionFile == "" {
+		return nil, errors.New("no comm data provided")
 	}
 	return a, nil
 }
@@ -89,17 +86,8 @@ func (app *Application) Run() error {
 		return err
 	}
 
-	var sms *sbrdata.Messages
-	sms, err = app.getMessages()
-	if err != nil {
-		return err
-	}
-
-	var calls *sbrdata.Calls
-	calls, err = app.getCalls()
-	if err != nil {
-		return err
-	}
+	//var sms *sbrdata.Messages
+	//var calls *sbrdata.Calls
 
 	var collection *sbrdata.Collection
 	if app.collectionFile != "" {
@@ -127,42 +115,8 @@ func (app *Application) Run() error {
 			Tags:         app.memberShipsAsTag,
 			TagPrefix:    app.tagPrefix,
 			Groups:       groups,
-			Sms:          sms,
-			CallData:     calls,
 			Collection:   collection,
 		}, g, templates)
 	}
 	return nil
-}
-
-func (app *Application) getCalls() (*sbrdata.Calls, error) {
-	var calls sbrdata.Calls
-	if app.callBackupFile != "" {
-		log.Print("reading call backup file")
-		data, err := os.ReadFile(app.callBackupFile)
-		if err != nil {
-			return nil, err
-		}
-		err = xml.Unmarshal(data, &calls)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return &calls, nil
-}
-
-func (app *Application) getMessages() (*sbrdata.Messages, error) {
-	var sms sbrdata.Messages
-	if app.smsBackupFile != "" {
-		log.Print("reading SMS backup file")
-		data, err := os.ReadFile(app.smsBackupFile)
-		if err != nil {
-			return nil, err
-		}
-		err = xml.Unmarshal(data, &sms)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return &sms, nil
 }

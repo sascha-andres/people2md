@@ -24,24 +24,26 @@ func sanitizePhoneNumber(number string) string {
 	number = strings.ReplaceAll(number, "/", "")
 	number = strings.ReplaceAll(number, "+49", "0")
 	number = strings.ReplaceAll(number, "+", "00")
-	number = strings.ReplaceAll(number, "(0)", "")
+	number = strings.ReplaceAll(number, "(", "")
+	number = strings.ReplaceAll(number, ")", "")
 	return strings.TrimSpace(number)
 }
 
 // filterCalls returns a list of calls that are related to the contact
 func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 	var result = &sbrdata.Calls{}
+
 	for _, call := range allCalls.Call {
 		include := false
-		for _, name := range c.Names {
-			include = name.DisplayName == call.GetContactName()
+		for i := range c.Names {
+			include = c.Names[i].DisplayName == call.GetContactName()
 			if include {
 				break
 			}
 		}
 		if !include {
-			for _, org := range c.Organizations {
-				include = org.Name == call.GetContactName()
+			for i := range c.Organizations {
+				include = c.Organizations[i].Name == call.GetContactName()
 				if include {
 					break
 				}
@@ -54,11 +56,11 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 		//  contact
 		if call.GetNumber() != "" {
 			num := sanitizePhoneNumber(call.GetNumber())
-			if strings.HasPrefix(num, "0") {
-				num = num[1:]
-			}
-			for _, p := range c.PhoneNumbers {
-				compare := sanitizePhoneNumber(p.Value)
+			for i := range c.PhoneNumbers {
+				compare := sanitizePhoneNumber(c.PhoneNumbers[i].Value)
+				//if strings.Contains(c.PhoneNumbers[i].Value, "31454") {
+				//	log.Printf("compare: %s, num: %s", compare, num)
+				//}
 				include = strings.HasSuffix(compare, num)
 				if include {
 					break
@@ -99,33 +101,23 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	} else {
 		e.MainLinkName = toFileName(data.Contact.Organizations[0].Name)
 	}
-	if data.Collection != nil {
-		filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
-			Call: data.Collection.Calls,
-		})
-		slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) int {
-			a, err := strconv.Atoi(i.GetDate())
-			if err != nil {
-				return 0
-			}
-			b, err := strconv.Atoi(j.GetDate())
-			if err != nil {
-				return 0
-			}
-			return b - a
-		})
-		e.CallData = filteredCalls
-		ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
-		ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
-	} else {
-		if data.CallData != nil {
-			e.CallData = data.CallData
+	filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
+		Call: data.Collection.Calls,
+	})
+	slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) int {
+		a, err := strconv.Atoi(i.GetDate())
+		if err != nil {
+			return 0
 		}
-		if data.Sms != nil {
-			ml = addSmsToList(data.Contact, data.Sms, ml)
-			ml = addMmsToList(data.Contact, data.Sms, ml)
+		b, err := strconv.Atoi(j.GetDate())
+		if err != nil {
+			return 0
 		}
-	}
+		return b - a
+	})
+	e.CallData = filteredCalls
+	ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
+	ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
 	slices.SortFunc(ml, func(i, j types.Message) int {
 		if i.UnixTimestamp < j.UnixTimestamp {
 			return -1
@@ -195,6 +187,11 @@ func (app *Application) writeBufferToFile(buff bytes.Buffer, destinationPath str
 		return
 	}
 
+	if app.dryRun {
+		log.Printf("would write %s", destinationPathWithExtension)
+		return
+	}
+
 	log.Printf("replacing %s", destinationPathWithExtension)
 
 	err = os.WriteFile(destinationPathWithExtension, buff.Bytes(), 0600)
@@ -261,6 +258,9 @@ func sanitizeBody(body string) string {
 	result = strings.Replace(result, ">", "&gt;", -1)
 	result = strings.Replace(result, "\n", "<br />", -1)
 	result = strings.Replace(result, "[", "", -1)
+	if strings.HasPrefix(result, "0") {
+		result = result[1:]
+	}
 	return result
 }
 
