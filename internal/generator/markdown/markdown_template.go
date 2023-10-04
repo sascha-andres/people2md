@@ -5,9 +5,10 @@ type: person
 disabled rules: [ all ]
 google:
   resource_name: {{ .ResourceName }}
+tags:
+  - contact{{ if .Tags }}{{ range .Tags }}
+  - {{ . }}{{ end }}{{ end }}
 ---
-
-Tags: #contact {{ if .Tags }}{{ .Tags }}{{ end }}
 
 {{ .PersonalData }}{{ if gt (len .Addresses) 0 }}## Address
 

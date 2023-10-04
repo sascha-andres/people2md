@@ -11,7 +11,7 @@ type (
 		Im           string
 		PhoneNumbers string
 		Email        string
-		Tags         string
+		Tags         []string
 		MainLinkName string
 		CallData     *sbrdata.Calls
 		MessageData  MessageList
