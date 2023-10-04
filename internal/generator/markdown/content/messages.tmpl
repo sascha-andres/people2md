@@ -1,6 +1,4 @@
-package markdown
-
-const MarkDownTemplateMessages string = `---
+---
 type: messages
 disabled rules: [ all ]
 google:
@@ -17,4 +15,4 @@ tags:
 |Date|Direction|Text|
 |---|---|---|
 {{ range .MessageData }}|{{ .Date }}|{{ if eq .Direction "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Text }}|
-{{ end }}`
+{{ end }}

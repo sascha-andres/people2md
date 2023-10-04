@@ -1,10 +1,14 @@
 package markdown
 
 import (
+	"embed"
 	"text/template"
 
 	"github.com/sascha-andres/people2md/internal/types"
 )
+
+//go:embed content/*
+var content embed.FS
 
 type (
 	// MarkdownData is the data structure for the markdown generator (Frontmatter, etc.)
@@ -26,44 +30,64 @@ func (mdData *MarkdownData) GetTemplate(id types.TemplateIdentifier) *template.T
 	funcMap := template.FuncMap{
 		"replace": types.TemplateReplace,
 	}
+	templateContent := ""
+
 	switch id {
 	case types.ContactSheetTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(ContactSheetTemplate))
+		templateContent = loadFromFSAsString("content/contactsheet.tmpl")
 	case types.AddressesTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(AddressesTemplate))
+		templateContent = loadFromFSAsString("content/addresses.tmpl")
 	case types.PersonalDataTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(PersonalDataTemplate))
+		templateContent = loadFromFSAsString("content/personal.tmpl")
 	case types.PhoneNumbersTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(PhoneNumbersTemplate))
+		templateContent = loadFromFSAsString("content/phone.tmpl")
 	case types.EmailAddressesTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(EmailsTemplate))
+		templateContent = loadFromFSAsString("content/emails.tmpl")
 	case types.CallsTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(MarkDownTemplateCalls))
+		templateContent = loadFromFSAsString("content/calls.tmpl")
 	case types.MessagesTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(MarkDownTemplateMessages))
+		templateContent = loadFromFSAsString("content/messages.tmpl")
 	case types.NotesSheetTemplate:
-		return template.Must(template.New("outer").Funcs(funcMap).Parse(NotesSheetTemplate))
+		templateContent = loadFromFSAsString("content/notes.tmpl")
 	}
 
-	return nil
+	if templateContent == "" {
+		return nil
+	}
+
+	return template.Must(template.New("outer").Funcs(funcMap).Parse(templateContent))
+}
+
+func loadFromFSAsString(filename string) string {
+	return string(loadFromFS(filename))
+}
+
+func loadFromFS(filename string) []byte {
+	data, err := content.ReadFile(filename)
+	if err != nil {
+		return nil
+	}
+	return data
 }
 
 func (mdData *MarkdownData) GetTemplateData(id types.TemplateIdentifier) []byte {
 	switch id {
 	case types.ContactSheetTemplate:
-		return []byte(ContactSheetTemplate)
+		return loadFromFS("content/contactsheet.tmpl")
 	case types.AddressesTemplate:
-		return []byte(AddressesTemplate)
+		return loadFromFS("content/addresses.tmpl")
 	case types.PersonalDataTemplate:
-		return []byte(PersonalDataTemplate)
+		return loadFromFS("content/personal.tmpl")
 	case types.PhoneNumbersTemplate:
-		return []byte(PhoneNumbersTemplate)
+		return loadFromFS("content/phone.tmpl")
 	case types.EmailAddressesTemplate:
-		return []byte(EmailsTemplate)
+		return loadFromFS("content/emails.tmpl")
 	case types.CallsTemplate:
-		return []byte(MarkDownTemplateCalls)
+		return loadFromFS("content/calls.tmpl")
 	case types.MessagesTemplate:
-		return []byte(MarkDownTemplateMessages)
+		return loadFromFS("content/messages.tmpl")
+	case types.NotesSheetTemplate:
+		return loadFromFS("content/notes.tmpl")
 	}
 
 	return nil

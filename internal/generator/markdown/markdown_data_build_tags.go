@@ -12,7 +12,11 @@ func (mdData *MarkdownData) BuildTags(tags, tagPrefix string, c *types.Contact, 
 		if nil != c.Memberships[i].ContactGroupMembership {
 			for _, cg := range groups {
 				if cg.ResourceName == c.Memberships[i].ContactGroupMembership.ContactGroupResourceName && strings.Contains(tags, strings.ToLower(cg.Name)) {
-					result = append(result, strings.ToLower(cg.Name))
+					if tagPrefix == "" {
+						result = append(result, strings.ToLower(cg.Name))
+					} else {
+						result = append(result, tagPrefix+strings.ToLower(cg.Name))
+					}
 				}
 			}
 		}
