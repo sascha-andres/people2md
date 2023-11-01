@@ -120,3 +120,4 @@ contacts.json
 groups.json
 dist/
 people2md
+.venv
