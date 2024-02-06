@@ -28,7 +28,8 @@ func (mdData *MarkdownData) SetResourceName(rn string) {
 
 func (mdData *MarkdownData) GetTemplate(id types.TemplateIdentifier) *template.Template {
 	funcMap := template.FuncMap{
-		"replace": types.TemplateReplace,
+		"replace":    types.TemplateReplace,
+		"toBirthday": types.TemplateDate,
 	}
 	templateContent := ""
 

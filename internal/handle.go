@@ -80,6 +80,9 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 
 	e.ETag = data.Contact.Etag
 	e.ResourceName = data.Contact.ResourceName
+	if len(data.Contact.Birthdays) > 0 {
+		e.Birthday = types.TemplateDate(data.Contact.Birthdays[0].Date.Year, data.Contact.Birthdays[0].Date.Month, data.Contact.Birthdays[0].Date.Day)
+	}
 
 	if 0 == len(data.Contact.Names) && 0 == len(data.Contact.Organizations) {
 		return

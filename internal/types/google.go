@@ -15,6 +15,7 @@ type (
 		MainLinkName string
 		CallData     *sbrdata.Calls
 		MessageData  MessageList
+		Birthday     string
 	}
 
 	ContactGroup struct {
