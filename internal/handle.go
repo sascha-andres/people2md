@@ -136,26 +136,30 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	e.Addresses = generator.BuildAddresses(data.Contact, templates.Addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(data.Contact, templates.PhoneNumbers)
 	e.Email = generator.BuildEmailAddresses(data.Contact, templates.EmailAddresses)
+	additionalDataPath := path.Join(data.PathForFiles, e.MainLinkName)
+	if _, err := os.Stat(additionalDataPath); os.IsNotExist(err) {
+		_ = os.MkdirAll(additionalDataPath, 0770)
+	}
 	if len(e.CallData.Call) > 0 && templates.Calls != nil {
 		var (
 			buff bytes.Buffer
 		)
 		_ = templates.Calls.Execute(&buff, e)
-		app.writeBufferToFile(buff, path.Join(data.PathForFiles, e.MainLinkName+" Calls"))
+		app.writeBufferToFile(buff, path.Join(additionalDataPath, e.MainLinkName+" Calls"))
 	}
 	if len(e.MessageData) > 0 && templates.Messages != nil {
 		var (
 			buff bytes.Buffer
 		)
 		_ = templates.Messages.Execute(&buff, e)
-		app.writeBufferToFile(buff, path.Join(data.PathForFiles, e.MainLinkName+" Messages"))
+		app.writeBufferToFile(buff, path.Join(additionalDataPath, e.MainLinkName+" Messages"))
 	}
 
 	var mainContactSheetBuffer bytes.Buffer
 	_ = templates.ContactSheet.Execute(&mainContactSheetBuffer, e)
 	app.writeBufferToFile(mainContactSheetBuffer, path.Join(data.PathForFiles, e.MainLinkName))
 
-	destinationPath := path.Join(data.PathForFiles, e.MainLinkName+" Notes")
+	destinationPath := path.Join(additionalDataPath, e.MainLinkName+" Notes")
 	if _, err := os.Stat(destinationPath + "." + app.fileExtension); errors.Is(err, os.ErrNotExist) {
 		var notesSheetBuffer bytes.Buffer
 		_ = templates.NotesSheet.Execute(&notesSheetBuffer, e)
