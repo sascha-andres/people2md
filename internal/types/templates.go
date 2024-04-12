@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 	"text/template"
+
+	"github.com/sascha-andres/reuse"
 )
 
 var funcMap = template.FuncMap{
@@ -14,7 +16,7 @@ var funcMap = template.FuncMap{
 
 // loadTemplates loads the templates from the given directory
 func loadTemplates(directory string, id TemplateIdentifier) (*template.Template, error) {
-	if fileExists(path.Join(directory, TemplateNames[id]+TemplateFileExtension)) {
+	if reuse.FileExists(path.Join(directory, TemplateNames[id]+TemplateFileExtension)) {
 		data, err := os.ReadFile(path.Join(directory, TemplateNames[id]+TemplateFileExtension))
 		if err != nil {
 			return nil, err
@@ -42,7 +44,7 @@ func (t *Templates) NewTemplates(generator DataBuilder) error {
 		t.Directory = "."
 	}
 	directory := path.Join(t.Directory, "template_"+t.Group)
-	if !directoryExists(directory) {
+	if !reuse.DirectoryExists(directory) {
 		return nil
 	}
 	var err error
@@ -87,7 +89,7 @@ func (t *Templates) WriteTemplates(generator DataBuilder) error {
 		t.Directory = "."
 	}
 	templateDirectory := path.Join(t.Directory, "template_"+t.Group)
-	if !fileExists(templateDirectory) {
+	if !reuse.FileExists(templateDirectory) {
 		if err := os.MkdirAll(templateDirectory, 0700); err != nil {
 			return err
 		}
@@ -118,18 +120,4 @@ func (t *Templates) WriteTemplates(generator DataBuilder) error {
 		return err
 	}
 	return os.WriteFile(path.Join(templateDirectory, TemplateNames[PhoneNumbersTemplate]+TemplateFileExtension), generator.GetTemplateData(PhoneNumbersTemplate), 0600)
-}
-
-func directoryExists(filename string) bool {
-	if i, err := os.Stat(filename); err == nil && i.IsDir() {
-		return true
-	}
-	return false
-}
-
-func fileExists(filename string) bool {
-	if _, err := os.Stat(filename); err == nil {
-		return true
-	}
-	return false
 }
