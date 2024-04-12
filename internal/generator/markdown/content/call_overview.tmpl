@@ -1,0 +1,16 @@
+---
+type: calls
+disabled rules: [ all ]
+google:
+resource_name: {{ .ResourceName }}
+tags:
+- contact{{ if gt (len .Tags) 0 }}{{ range .Tags }}
+    - {{ . }}{{ end }}{{ end }}
+---
+
+[[{{.MainLinkName}}]]
+
+# Call log
+
+{{ range .Groups}}- [[{{.MainLinkName}} .Key"{{.Key}}]]
+{{ end }}

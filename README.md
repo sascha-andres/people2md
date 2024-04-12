@@ -34,6 +34,23 @@ To print out the call history and SMS you can provide SMS and calls using a back
 This is an Android only app. Due to a lack of iPhone and knowledge of it's ecosystem there is no support for it. Feel free
 to contribute.
 
+## Required data calls
+
+### Overview
+
+- ResourceName
+- Tags
+- MainLinkName
+- Groups
+
+### List
+
+- ResourceName
+- Tags
+- MainLinkName
+- GroupKey
+- CallData
+
 ## Upcoming feature
 
 - [ ] allow dumping of properties
