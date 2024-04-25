@@ -1,6 +1,8 @@
+github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
+github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/sascha-andres/reuse v0.6.2 h1:jjPWAaxMI3vTVr8gZYdck111mvELo9oBwAZSEy+WU/k=
 github.com/sascha-andres/reuse v0.6.2/go.mod h1:qyqrqy/xJOha4jtGO0YobTAbb/xRcjfZ3is8oFZlCgs=
-github.com/sascha-andres/sbrdata v1.1.1 h1:fgtexRdaFUvbMzI0SzKlGZ47opqUh2IbzkG8/IjaqPA=
-github.com/sascha-andres/sbrdata v1.1.1/go.mod h1:R5TLCVMkgAda+9XbZxElqgMu2f7iiN/JOHAa7WSB85g=
+github.com/sascha-andres/sbrdata/v2 v2.0.1 h1:8SVHQWDfKJ6nQ4WzWPiJtrOCkRT3H7Q3PrmBB4vpAe4=
+github.com/sascha-andres/sbrdata/v2 v2.0.1/go.mod h1:5/3My7yuyEq49vR4TPdTFxVxXWAkiXDjnrYkelO7A14=
 golang.org/x/exp v0.0.0-20240409090435-93d18d7e34b8 h1:ESSUROHIBHg7USnszlcdmjBEwdMj9VUvU+OPk4yl2mc=
 golang.org/x/exp v0.0.0-20240409090435-93d18d7e34b8/go.mod h1:/lliqkxwWAhPjf5oSOIJup2XcqJaw8RGS6k3TGEc7GI=

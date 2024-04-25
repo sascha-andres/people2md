@@ -3,7 +3,7 @@ package types
 import (
 	"text/template"
 
-	"github.com/sascha-andres/sbrdata"
+	"github.com/sascha-andres/sbrdata/v2"
 )
 
 type (
@@ -16,7 +16,7 @@ type (
 		Tags         string
 		TagPrefix    string
 		Groups       []ContactGroup
-		Collection   *sbrdata.Collection
+		Collection   *sbrdata.GroupedCollection
 	}
 
 	// Templates contains templates used to render

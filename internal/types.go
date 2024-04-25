@@ -8,7 +8,7 @@ import (
 
 	"github.com/sascha-andres/people2md/internal/generator"
 	"github.com/sascha-andres/people2md/internal/types"
-	"github.com/sascha-andres/sbrdata"
+	"github.com/sascha-andres/sbrdata/v2"
 )
 
 type (
@@ -89,9 +89,17 @@ func (app *Application) Run() error {
 	//var sms *sbrdata.Messages
 	//var calls *sbrdata.Calls
 
-	var collection *sbrdata.Collection
+	var collection *sbrdata.GroupedCollection
 	if app.collectionFile != "" {
-		collection, err = sbrdata.LoadCollection(app.collectionFile) // TODO this should fail if it does not exist
+		opts := []sbrdata.GroupedCollectionOption{
+			sbrdata.SetBaseDirectory(app.collectionFile),
+			sbrdata.SetGroupPeriod(sbrdata.GroupYearly),
+		}
+		if app.verbose {
+			opts = append(opts, sbrdata.SetVerbose())
+		}
+		// TODO backup
+		collection, err = sbrdata.NewGroupedCollection(opts...)
 		if err != nil {
 			return err
 		}

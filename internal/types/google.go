@@ -1,6 +1,6 @@
 package types
 
-import "github.com/sascha-andres/sbrdata"
+import "github.com/sascha-andres/sbrdata/v2"
 
 type (
 	Elements struct {
@@ -13,7 +13,7 @@ type (
 		Email        string
 		Tags         []string
 		MainLinkName string
-		CallData     *sbrdata.Calls
+		Calls        []sbrdata.Call
 		MessageData  MessageList
 		Birthday     string
 	}

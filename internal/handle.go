@@ -13,7 +13,7 @@ import (
 	"slices"
 
 	"github.com/sascha-andres/people2md/internal/types"
-	"github.com/sascha-andres/sbrdata"
+	"github.com/sascha-andres/sbrdata/v2"
 )
 
 // sanitizePhoneNumber removes all characters that should not be part of a phone number
@@ -30,10 +30,10 @@ func sanitizePhoneNumber(number string) string {
 }
 
 // filterCalls returns a list of calls that are related to the contact
-func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
-	var result = &sbrdata.Calls{}
+func filterCalls(c types.Contact, allCalls []sbrdata.Call) []sbrdata.Call {
+	var result = make([]sbrdata.Call, 0)
 
-	for _, call := range allCalls.Call {
+	for _, call := range allCalls {
 		include := false
 		for i := range c.Names {
 			include = c.Names[i].DisplayName == call.GetContactName()
@@ -68,7 +68,7 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 			}
 		}
 		if include {
-			result.Call = append(result.Call, call)
+			result = append(result, call)
 		}
 	}
 	return result
@@ -104,10 +104,13 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	} else {
 		e.MainLinkName = toFileName(data.Contact.Organizations[0].Name)
 	}
-	filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
-		Call: data.Collection.Calls,
-	})
-	slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) int {
+	calls, err := data.Collection.AllCalls()
+	if err != nil {
+		// TODO log...
+		return
+	}
+	filteredCalls := filterCalls(*data.Contact, calls)
+	slices.SortFunc(filteredCalls, func(i, j sbrdata.Call) int {
 		a, err := strconv.Atoi(i.GetDate())
 		if err != nil {
 			return 0
@@ -118,9 +121,19 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 		}
 		return b - a
 	})
-	e.CallData = filteredCalls
-	ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
-	ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
+	e.Calls = filteredCalls
+	sms, err := data.Collection.AllSms()
+	if err != nil {
+		// TODO log...
+		return
+	}
+	ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: sms}, ml)
+	mms, err := data.Collection.AllMms()
+	if err != nil {
+		// TODO log...
+		return
+	}
+	ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: mms}, ml)
 	slices.SortFunc(ml, func(i, j types.Message) int {
 		if i.UnixTimestamp < j.UnixTimestamp {
 			return -1
@@ -140,7 +153,7 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	if _, err := os.Stat(additionalDataPath); os.IsNotExist(err) {
 		_ = os.MkdirAll(additionalDataPath, 0770)
 	}
-	if len(e.CallData.Call) > 0 && templates.Calls != nil {
+	if len(e.Calls) > 0 && templates.Calls != nil {
 		var (
 			buff bytes.Buffer
 		)
