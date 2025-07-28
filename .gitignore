@@ -121,3 +121,4 @@ groups.json
 dist/
 people2md
 .venv
+tmp/
