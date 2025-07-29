@@ -14,5 +14,5 @@ tags:
 
 |Date|Direction|Number|Duration (s)|
 |---|---|---|---|
-{{ range .CallData.Call }}|{{ .ReadableDate }}|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|
+{{ range .CallData.Call }}|[[{{ .SanitizedNumber }}_{{ .Date }}|{{ .ReadableDate }}]]|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|
 {{ end }}

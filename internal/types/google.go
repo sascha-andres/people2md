@@ -1,8 +1,28 @@
 package types
 
-import "github.com/sascha-andres/sbrdata"
+func (cw *CallWrapper) GetDate() string {
+	return cw.Date
+}
 
 type (
+	CallDataWrapper struct {
+		Call []CallWrapper
+	}
+	// CallWrapper is a single call
+	CallWrapper struct {
+		Number                    string `xml:"number,attr"`
+		SanitizedNumber           string
+		Duration                  string `xml:"duration,attr"`
+		Date                      string `xml:"date,attr"`
+		Type                      string `xml:"type,attr"`
+		Presentation              string `xml:"presentation,attr"`
+		SubscriptionID            string `xml:"subscription_id,attr"`
+		PostDialDigits            string `xml:"post_dial_digits,attr"`
+		SubscriptionComponentName string `xml:"subscription_component_name,attr"`
+		ReadableDate              string `xml:"readable_date,attr"`
+		ContactName               string `xml:"contact_name,attr"`
+	}
+
 	Elements struct {
 		ETag         string
 		ResourceName string
@@ -13,7 +33,7 @@ type (
 		Email        string
 		Tags         []string
 		MainLinkName string
-		CallData     *sbrdata.Calls
+		CallData     *CallDataWrapper
 		MessageData  MessageList
 		Birthday     string
 	}
