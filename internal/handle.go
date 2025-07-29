@@ -7,13 +7,13 @@ import (
 	"log"
 	"os"
 	"path"
+	"slices"
 	"strconv"
 	"strings"
 
-	"slices"
+	"github.com/sascha-andres/sbrdata"
 
 	"github.com/sascha-andres/people2md/internal/types"
-	"github.com/sascha-andres/sbrdata"
 )
 
 // sanitizePhoneNumber removes all characters that should not be part of a phone number
@@ -30,8 +30,18 @@ func sanitizePhoneNumber(number string) string {
 }
 
 // filterCalls returns a list of calls that are related to the contact
-func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
-	var result = &sbrdata.Calls{}
+func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *types.CallDataWrapper {
+	var result = &types.CallDataWrapper{}
+
+	rn := func(in string) string {
+		result := ""
+		for _, c := range in {
+			if c >= '0' && c <= '9' {
+				result += string(c)
+			}
+		}
+		return result
+	}
 
 	for _, call := range allCalls.Call {
 		include := false
@@ -68,7 +78,20 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *sbrdata.Calls {
 			}
 		}
 		if include {
-			result.Call = append(result.Call, call)
+			c := types.CallWrapper{
+				Number:                    call.Number,
+				SanitizedNumber:           rn(call.Number),
+				Duration:                  call.Duration,
+				Date:                      call.Date,
+				Type:                      call.Type,
+				Presentation:              call.Presentation,
+				SubscriptionID:            call.SubscriptionID,
+				PostDialDigits:            call.PostDialDigits,
+				SubscriptionComponentName: call.SubscriptionComponentName,
+				ReadableDate:              call.ReadableDate,
+				ContactName:               call.ContactName,
+			}
+			result.Call = append(result.Call, c)
 		}
 	}
 	return result
@@ -107,7 +130,7 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	filteredCalls := filterCalls(*data.Contact, &sbrdata.Calls{
 		Call: data.Collection.Calls,
 	})
-	slices.SortFunc(filteredCalls.Call, func(i, j sbrdata.Call) int {
+	slices.SortFunc(filteredCalls.Call, func(i, j types.CallWrapper) int {
 		a, err := strconv.Atoi(i.GetDate())
 		if err != nil {
 			return 0
