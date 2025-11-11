@@ -156,6 +156,7 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	e.MessageData = ml
 	e.PersonalData = generator.BuildPersonalData(templates.PersonalData, data.Contact)
 	e.Tags = generator.BuildTags(data.Tags, data.TagPrefix, data.Contact, data.Groups)
+	e.Aliases = generator.BuildAliases(data.Contact)
 	e.Addresses = generator.BuildAddresses(data.Contact, templates.Addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(data.Contact, templates.PhoneNumbers)
 	e.Email = generator.BuildEmailAddresses(data.Contact, templates.EmailAddresses)

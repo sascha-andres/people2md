@@ -55,5 +55,6 @@ type (
 		SetResourceName(rn string)
 		GetTemplate(id TemplateIdentifier) *template.Template
 		GetTemplateData(id TemplateIdentifier) []byte
+		BuildAliases(contact *Contact) []string
 	}
 )
