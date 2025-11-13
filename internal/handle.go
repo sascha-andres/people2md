@@ -156,6 +156,7 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	e.MessageData = ml
 	e.PersonalData = generator.BuildPersonalData(templates.PersonalData, data.Contact)
 	e.Tags = generator.BuildTags(data.Tags, data.TagPrefix, data.Contact, data.Groups)
+	e.Aliases = generator.BuildAliases(data.Contact)
 	e.Addresses = generator.BuildAddresses(data.Contact, templates.Addresses)
 	e.PhoneNumbers = generator.BuildPhoneNumbers(data.Contact, templates.PhoneNumbers)
 	e.Email = generator.BuildEmailAddresses(data.Contact, templates.EmailAddresses)
@@ -179,7 +180,10 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	}
 
 	var mainContactSheetBuffer bytes.Buffer
-	_ = templates.ContactSheet.Execute(&mainContactSheetBuffer, e)
+	err := templates.ContactSheet.Execute(&mainContactSheetBuffer, e)
+	if err != nil {
+		log.Printf("!! could not execute template: %s", err)
+	}
 	app.writeBufferToFile(mainContactSheetBuffer, path.Join(data.PathForFiles, e.MainLinkName))
 
 	destinationPath := path.Join(additionalDataPath, e.MainLinkName+" Notes")

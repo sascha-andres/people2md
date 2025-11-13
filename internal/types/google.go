@@ -36,6 +36,7 @@ type (
 		CallData     *CallDataWrapper
 		MessageData  MessageList
 		Birthday     string
+		Aliases      []string
 	}
 
 	ContactGroup struct {
