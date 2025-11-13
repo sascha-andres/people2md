@@ -1,6 +1,7 @@
 package markdown
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/sascha-andres/people2md/internal/types"
@@ -57,6 +58,9 @@ func buildAlias(name string) string {
 		} else {
 			result = strings.Replace(result, string(from), to, -1)
 		}
+	}
+	if strings.Contains(result, "Carmen") {
+		fmt.Printf("Carmen: %s\n", result)
 	}
 	return result
 }
