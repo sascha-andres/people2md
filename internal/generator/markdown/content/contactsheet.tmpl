@@ -7,7 +7,7 @@ google:
 tags:
   - contact{{ if gt (len .Tags) 0 }}{{ range .Tags }}
   - {{ . }}{{ end }}{{ end }}
-aliases:{{ if gt (len.Aliases) 0}}{{ range .Aliases }}
+aliases:{{ if gt (len .Aliases) 0}}{{ range .Aliases }}
   - {{ . }}{{ end }}{{ end }}
 ---
 

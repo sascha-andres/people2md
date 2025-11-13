@@ -180,7 +180,10 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 	}
 
 	var mainContactSheetBuffer bytes.Buffer
-	_ = templates.ContactSheet.Execute(&mainContactSheetBuffer, e)
+	err := templates.ContactSheet.Execute(&mainContactSheetBuffer, e)
+	if err != nil {
+		log.Printf("!! could not execute template: %s", err)
+	}
 	app.writeBufferToFile(mainContactSheetBuffer, path.Join(data.PathForFiles, e.MainLinkName))
 
 	destinationPath := path.Join(additionalDataPath, e.MainLinkName+" Notes")
