@@ -3,7 +3,7 @@ package types
 import (
 	"text/template"
 
-	"github.com/sascha-andres/sbrdata"
+	"github.com/sascha-andres/sbrdata/v2"
 )
 
 type (
