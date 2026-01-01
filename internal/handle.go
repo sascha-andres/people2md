@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/sascha-andres/sbrdata"
+	"github.com/sascha-andres/sbrdata/v2"
 
 	"github.com/sascha-andres/people2md/internal/types"
 )
@@ -142,8 +142,8 @@ func (app *Application) handle(data types.DataReferences, generator types.DataBu
 		return b - a
 	})
 	e.CallData = filteredCalls
-	ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.SMS}, ml)
-	ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.MMS}, ml)
+	ml = addSmsToList(data.Contact, &sbrdata.Messages{Sms: data.Collection.Sms}, ml)
+	ml = addMmsToList(data.Contact, &sbrdata.Messages{Mms: data.Collection.Mms}, ml)
 	slices.SortFunc(ml, func(i, j types.Message) int {
 		if i.UnixTimestamp < j.UnixTimestamp {
 			return -1

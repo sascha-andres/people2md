@@ -8,7 +8,7 @@ import (
 
 	"github.com/sascha-andres/people2md/internal/generator"
 	"github.com/sascha-andres/people2md/internal/types"
-	"github.com/sascha-andres/sbrdata"
+	"github.com/sascha-andres/sbrdata/v2"
 )
 
 type (
