@@ -21,6 +21,8 @@ type (
 		SubscriptionComponentName string `xml:"subscription_component_name,attr"`
 		ReadableDate              string `xml:"readable_date,attr"`
 		ContactName               string `xml:"contact_name,attr"`
+		ServiceType               string `xml:"service_type,attr"`
+		DataFrom                  string `xml:"data_from,attr"`
 	}
 
 	Elements struct {

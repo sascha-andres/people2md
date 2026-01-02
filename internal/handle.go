@@ -91,6 +91,16 @@ func filterCalls(c types.Contact, allCalls *sbrdata.Calls) *types.CallDataWrappe
 				ReadableDate:              call.ReadableDate,
 				ContactName:               call.ContactName,
 			}
+			if call.ServiceType != nil {
+				c.ServiceType = *call.ServiceType
+			} else {
+				c.ServiceType = ""
+			}
+			if call.DataFrom != nil {
+				c.DataFrom = *call.DataFrom
+			} else {
+				c.DataFrom = ""
+			}
 			result.Call = append(result.Call, c)
 		}
 	}

@@ -12,7 +12,7 @@ tags:
 
 # Call log
 
-|Date|Direction|Number|Duration (s)|
-|---|---|---|---|
-{{ range .CallData.Call }}|[{{ .ReadableDate }} ]({{ .SanitizedNumber }}_{{ .Date }})|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|
+|Date|Direction|Number|Duration (s)|Service|From|
+|---|---|---|---|---|---|
+{{ range .CallData.Call }}|[{{ .ReadableDate }} ]({{ .SanitizedNumber }}_{{ .Date }})|{{ if eq .Type "2" }}outgoing{{ else }}incoming{{ end }}|{{ .Number }}|{{ .Duration }}|{{ .ServiceType }}|{{ .DataFrom }}|
 {{ end }}
